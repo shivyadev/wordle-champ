@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type="text"], 
+input[type="password"],
+input[type="email"] {
+  @apply w-full py-1 px-2 border-b-2 border-gray-200 shadow-sm 
+}
+
+input[type="text"]:focus, 
+input[type="password"]:focus, 
+input[type="email"]:focus {
+@apply outline-none border-b-2 border-primary
+}
