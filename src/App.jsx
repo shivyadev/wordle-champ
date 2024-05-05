@@ -4,18 +4,21 @@ import LoginPage from "./client/pages/LoginPage";
 import RegisterPage from "./client/pages/RegisterPage";
 import axios from 'axios';
 import ProfilePage from "./client/pages/ProfilePage";
+import { UserContextProvider } from "./UserContext";
 
 axios.defaults.baseURL = 'http://localhost:5000';
 axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <Routes>
-      <Route index element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-    </Routes>
+    <UserContextProvider>
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
+    </UserContextProvider>
   );
 }
 

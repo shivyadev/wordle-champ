@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../../UserContext";
 
 export default function RegisterPage() {
     const [selected, setSelected] = useState(false);
@@ -8,7 +9,10 @@ export default function RegisterPage() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [signedUp, setSignedUp] = useState(false);
+    const { user, setUser } = useContext(UserContext);
     let labelStyles = "absolute top-2 left-2 text-gray-500 text-sm transition-all";
+
+    if (user != null) return <Navigate to='/profile' />
 
     async function handleSubmit(ev) {
         ev.preventDefault();
@@ -19,13 +23,16 @@ export default function RegisterPage() {
                 password,
             })
 
-            if (data) setSignedUp(true);
+            if (data) {
+                setSignedUp(true);
+                setUser(data);
+            }
         } catch (err) {
             console.error(err);
         }
     }
 
-    if (signedUp) return <Navigate to={'/profile'} />
+    if (signedUp) return <Navigate to={'/login'} />
 
     function handleSelect() {
         if (name.length > 0 || mail.length > 0 || password.length > 0) {

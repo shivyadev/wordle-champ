@@ -1,24 +1,29 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, Navigate } from "react-router-dom";
 import axios from 'axios';
+import { UserContext } from "../../UserContext";
 
 export default function LoginPage() {
     const [selected, setSelected] = useState(false);
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [loggedIn, setLoggedIn] = useState(false);
+    const { user, setUser } = useContext(UserContext);
     let labelStyles = "absolute top-8 left-2 text-gray-500 text-sm transition-all";
+
+    if (user != null) return <Navigate to='/profile' />
 
     async function handleSubmit(ev) {
         ev.preventDefault();
         try {
             const { data } = await axios.post('/login', {
                 mail,
-                password
+                password,
             })
 
             if (data) {
                 setLoggedIn(true);
+                setUser(data);
             }
 
         } catch (err) {
@@ -28,7 +33,7 @@ export default function LoginPage() {
 
     if (loggedIn) return <Navigate to="/profile" />
 
-    function handleSelect(ev) {
+    function handleSelect() {
         if (mail.length > 0 || password.length > 0) {
             setSelected(true);
         } else {
