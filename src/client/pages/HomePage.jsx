@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import logo from '../../images/Wordle Champs.png';
 
 export default function HomePage() {
     const [toLogin, setToLogin] = useState(false);
@@ -40,7 +39,7 @@ export default function HomePage() {
                         </div>
                         {scroll && (
                             <div className="mr-7 my-2 p-2 px-8 rounded-2xl text-slate-100 text-lg bg-gradient-to-r from-green-600 to-green-500 hover:from-green-800 hover:to-green-600">
-                                <button>Play</button>
+                                <button onClick={() => setToLogin(true)}>Play</button>
                             </div>
                         )}
                     </div>
@@ -55,7 +54,7 @@ export default function HomePage() {
                         <p className="text-xl text-gray-500 text-center">The top platform to play Wordle <br /> & <br /> compete with your friends</p>
                     </div>
                     <div>
-                        <button className="mt-16 p-5 px-12 rounded-2xl text-gray-200 font-semibold text-xl bg-gradient-to-r from-green-600 to-green-500 hover:from-green-800 hover:to-green-600">Play</button>
+                        <button className="mt-16 p-5 px-12 rounded-2xl text-gray-200 font-semibold text-xl bg-gradient-to-r from-green-600 to-green-500 hover:from-green-800 hover:to-green-600" onClick={() => setToLogin(true)}>Play</button>
                     </div>
                 </div>
             </div>
@@ -80,7 +79,7 @@ export default function HomePage() {
                             <div className="col-span-2">
                                 <h1 className="font-semibold text-2xl text-center mb-5">Connect With Friends</h1>
                                 <p className="font-semibold text-justify text-gray-600 tracking-wider">
-                                    Visit other people's profiles on the platform to explore their Wordle scores, view their ongoing Wordle games, and discover their progress and achievements in the popular word puzzle game.
+                                    {"Visit other people's profiles on the platform to explore their Wordle scores, view their ongoing Wordle games, and discover their progress and achievements in the popular word puzzle game."}
                                 </p>
                             </div>
                             <div className="m-auto border-2 border-black w-60 h-60 col-span-1 rounded-2xl">
