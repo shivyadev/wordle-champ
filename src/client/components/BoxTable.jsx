@@ -1,12 +1,28 @@
-import Box from "./Box";
+export default function BoxTable({ word, targetWord }) {
 
-export default function BoxTable() {
+    function checkGuess(val, index) {
 
-    var arr = new Array(5).fill(" ");
+        let boxStyle = "flex justify-center items-center w-16 h-16 border-2 border-gray-400 text-white uppercase";
+
+        if (targetWord[index] === val) {
+            boxStyle += " bg-green-500";
+        }
+
+        else if (targetWord.includes(val)) {
+            boxStyle += " bg-yellow-500";
+        }
+
+        return (
+            <div key={index} className={boxStyle}>
+                {val}
+            </div>
+        );
+    }
+
     return (
-        <div className="grid grid-cols-5 gap-1 text-white">
-            {arr.map((_, i) => (
-                <Box alpha={arr[i]} key={i} />
+        <div className="grid grid-cols-5 gap-1">
+            {word.map((i, index) => (
+                checkGuess(i, index)
             ))}
         </div>
     );

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -38,7 +39,7 @@ const verifyAccessToken = (req, res, next) => {
     
     const {accessToken} = req.cookies;
 
-    jwt.verify(accessToken, process.env.Access_Token_Secret, (err, data) => {
+    jwt.verify(accessToken, process.env.Access_Token_Secret, (err) => {
         if(err) {
             if(err.name === 'TokenExpiredError'){
                 return refreshToken(req, res, next);      
@@ -108,7 +109,7 @@ app.get('/profile', verifyAccessToken, (req,res) => {
             res.json(userDoc);
         })
     }else {
-        res.status(401).json('Unauthrized');
+        res.status(401).json('Unauthorized');
     }
 })
 
