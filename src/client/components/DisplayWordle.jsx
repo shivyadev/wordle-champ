@@ -1,9 +1,10 @@
+
 import BoxTable from "./BoxTable";
 
 export default function DisplayWordle({ wordleWords, targetWord }) {
 
     return (
-        <div className="m-auto bg-black p-1 opacity-75 hover:opacity-100 transition-all cursor-pointer">
+        <div className="bg-black p-1 opacity-75 hover:opacity-100 transition-all cursor-pointer">
             <div className="relative grid grid-rows-5 gap-1">
                 {
                     wordleWords.map((val, i) => (
@@ -14,9 +15,7 @@ export default function DisplayWordle({ wordleWords, targetWord }) {
                         />
                     ))
                 }
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-100 via-[rgba(255,255,255,0.3)] to-transparent opacity-90 hover:opacity-60">
-
-                </div>
+                <div className="absolute inset-0 bg-gray-100 opacity-20 hover:opacity-0" ></div>
             </div>
         </div>
     );

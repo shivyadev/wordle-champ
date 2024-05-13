@@ -14,8 +14,6 @@ export default function BoxTable({ word, targetWord, boxStyle = "", replay, setR
         4: boxStyle,
     });
 
-    console.log(boxStyles);
-
     if (replay) {
         setBoxStyles({
             0: boxStyle,
