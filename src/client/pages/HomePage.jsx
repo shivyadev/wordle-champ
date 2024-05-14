@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import Icons from "../components/Icons";
 
 export default function HomePage() {
     const [toLogin, setToLogin] = useState(false);
@@ -29,14 +30,7 @@ export default function HomePage() {
             <div className={scroll ? "fixed w-full bg-black" : "bg-black"}>
                 <section>
                     <div className="flex justify-between items-center ml-10 p-2 pt-2 font-semibold text-xl text-white">
-                        <div>
-                            <div className="text-6xl">
-                                WC
-                            </div>
-                            <span className="absolute top-9 left-11 text-xs bg-gray-700 opacity-85">
-                                <p className="text-white">- Wordle Champs -</p>
-                            </span>
-                        </div>
+                        <Icons iconName={'logo'} />
                         {scroll && (
                             <div className="mr-7 my-2 p-2 px-8 rounded-2xl text-slate-100 text-lg bg-gradient-to-r from-green-600 to-green-500 hover:from-green-800 hover:to-green-600">
                                 <button onClick={() => setToLogin(true)}>Play</button>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export default function BoxTable({ word, targetWord, boxStyle = "", replay, setReplay }) {
 
     if (boxStyle === "") {
-        boxStyle += "flex justify-center items-center w-16 h-16 border-2 border-gray-400 text-white uppercase";
+        boxStyle += "flex justify-center items-center w-16 h-16 bg-gray-200 rounded-xl text-black uppercase";
     }
 
     const [boxStyles, setBoxStyles] = useState({
@@ -36,19 +36,19 @@ export default function BoxTable({ word, targetWord, boxStyle = "", replay, setR
                 setBoxStyles(prev => (
                     {
                         ...prev,
-                        [index]: prev[index] + " bg-green-500",
-                        [lastOccured]: prev[lastOccured].replace(" bg-yellow-500", "")
+                        [index]: prev[index].replace(" bg-gray-200", " bg-green-500"),
+                        [lastOccured]: prev[lastOccured].replace(" bg-yellow-500", " bg-gray-200")
                     }
                 ));
             }
         } else {
             if (val === targetWord[index]) {
                 setBoxStyles(prev => (
-                    { ...prev, [index]: prev[index] + " bg-green-500" }
+                    { ...prev, [index]: prev[index].replace(" bg-gray-200", " bg-green-500") }
                 ));
             } else if (targetWord.includes(val)) {
                 setBoxStyles(prev => (
-                    { ...prev, [index]: prev[index] + " bg-yellow-500" }
+                    { ...prev, [index]: prev[index].replace(" bg-gray-200", " bg-yellow-500") }
                 ));
             }
         }
@@ -67,11 +67,11 @@ export default function BoxTable({ word, targetWord, boxStyle = "", replay, setR
         } else {
             if (val === targetWord[index]) {
                 setBoxStyles(prev => (
-                    { ...prev, [index]: prev[index] + " bg-green-500" }
+                    { ...prev, [index]: prev[index].replace(" bg-gray-200", " bg-green-500") }
                 ));
             } else if (targetWord.includes(val)) {
                 setBoxStyles(prev => (
-                    { ...prev, [index]: prev[index] + " bg-yellow-500" }
+                    { ...prev, [index]: prev[index].replace(" bg-gray-200", " bg-yellow-500") }
                 ));
             }
         }

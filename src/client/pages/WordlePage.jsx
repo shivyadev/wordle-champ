@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import BoxTable from "../components/BoxTable";
 import { Navigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function WordlePage() {
 
@@ -59,15 +60,9 @@ export default function WordlePage() {
 
 
     return (
-        <div className="flex flex-col justify-center items-center w-screen h-screen bg-black">
-            <div className="fixed top-5 left-5">
-                <button className="bg-red-400 p-1 rounded-full" onClick={() => setRoute(true)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <h1 className="text-6xl text-white mb-6">
+        <div className="flex flex-col justify-center items-center w-screen h-screen bg-white">
+            <Navbar onPage={'wordle'} />
+            <h1 className="text-6xl text-gray-700 mb-6">
                 {gameWon && "You Won!!!"}
                 {!gameWon && gameOver && "You Lost"}
                 {!gameOver && !gameWon && "Wordle"}
