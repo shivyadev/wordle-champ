@@ -5,6 +5,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import User from './models/User.js';
+import GameRecords from "./models/GameRecords.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
 const app = express();
@@ -21,7 +22,6 @@ app.use(cookieParser());
 mongoose.connect(process.env.MONGO_URL);
 
 const bcryptSalt = bcrypt.genSaltSync(10);
-
 
 function refreshToken(req, res, next) {
     const {refreshToken} = req.cookies;
@@ -63,13 +63,17 @@ app.post('/register', async (req,res) => {
     const email = !mail.includes("@gmail.com") ? mail.concat("@gmail.com") : mail; 
 
     try {
-        await User.create({
+        const createdUser = await User.create({
             name,
             mail: email,
             password: encryptedPwd,
-        })
+        });
+        
+        await GameRecords.create({
+            userId: createdUser._id,
+        });
 
-        res.json('User Created');
+        res.json(createdUser);
 
     }catch (err){
         console.error(err);
@@ -110,6 +114,32 @@ app.get('/profile', verifyAccessToken, (req,res) => {
         })
     }else {
         res.status(401).json('Unauthorized');
+    }
+})
+
+app.get('/gamerecord/:id', async (req, res) => {
+    const {id} = req.params;
+    try{
+        const gameRecord = await GameRecords.findOne({userId: id});
+        res.json(gameRecord);
+    }catch(err){
+        console.error('here',err);
+    }
+})
+
+app.post('/storegame', async (req, res) => {
+    const {userId, guessedWords, won} = req.body;
+    
+    try{
+        const gameRecord = await GameRecords.findOne({userId});
+        gameRecord.games.length = 0;
+        gameRecord.gamesCompleted += 1;
+        if(won) {
+            gameRecord.gamesWon += 1;
+        }
+        await gameRecord.save();
+    }catch(err){
+        console.error(err)
     }
 })
 

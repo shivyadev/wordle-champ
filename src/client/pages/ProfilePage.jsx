@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import img from '../../images/image1.jpg';
@@ -13,6 +13,15 @@ export default function ProfilePage() {
     const { user, ready, setUser } = useContext(UserContext);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
+    const [gameRecord, setGameRecord] = useState(null);
+
+    useEffect(() => {
+        axios.get(`/gamerecord/${user._id}`).then(response => {
+            const { data } = response;
+            console.log(data);
+            setGameRecord(data);
+        })
+    }, []);
 
     function handleClick(idx) {
         setSelectedWordleIndex(idx);
@@ -25,28 +34,7 @@ export default function ProfilePage() {
         setUser(null);
     }
 
-    const wordleWords = [
-        ['h', 'e', 'l', 'l', 'o'],
-        ['f', 'a', 'r', 'm', 's'],
-        ['t', 'e', 'e', 't', 'h'],
-        ['f', 'e', 't', 'c', 'h'],
-        ['t', 'e', 'a', 'c', 'h']
-    ];
-
-    const wordleWords2 = [
-        ['h', 'e', 'l', 'l', 'o'],
-        ['f', 'a', 'r', 'm', 's'],
-        ['t', 'e', 'e', 't', 'h'],
-        ['f', 'e', 'a', 's', 't'],
-        ['t', 'e', 'a', 'c', 'h']
-    ];
-
-    const wordleArr = [
-        wordleWords,
-        wordleWords2,
-        wordleWords,
-        wordleWords
-    ]
+    const wordleArr = [];
 
     if (redirect !== '') return <Navigate to={redirect} />
 
@@ -62,6 +50,9 @@ export default function ProfilePage() {
     return (
         <div>
             <Navbar onPage={'profile'} />
+            <form className="w-[30%] m-auto mt-2">
+                <input type="text" id="searchInput" className="text-center bg-gray-50 rounded-2xl" placeholder="Search Profile" />
+            </form>
             <div className="grid grid-cols-7 mx-10 my-[4%]">
                 <div className="flex flex-col col-span-3 items-center">
                     <div className="text-center">
@@ -116,9 +107,9 @@ export default function ProfilePage() {
                     <div className="p-8 border-b-[3px] border-gray-200 shadow-lg">
                         <h1 className="text-3xl font-semibold mb-6">Player Stats</h1>
                         <ul>
-                            <li>Number of games played: </li>
-                            <li>Number of games completed: </li>
-                            <li>Success Rate: </li>
+                            <li>Number of games played: {gameRecord?.gamesCompleted}</li>
+                            <li>Number of games completed: {gameRecord?.gamesWon}</li>
+                            <li>Success Rate: {(gameRecord?.gamesWon / gameRecord?.gamesCompleted).toFixed(2) * 100}%</li>
                         </ul>
                     </div>
                     <div>

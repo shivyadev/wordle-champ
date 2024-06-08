@@ -13,3 +13,7 @@ input[type="password"]:focus,
 input[type="email"]:focus {
 @apply outline-none border-b-2 border-primary
 }
+
+#searchInput {
+  @apply outline-none border-b-2 border-gray-200 
+}

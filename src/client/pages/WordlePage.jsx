@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import BoxTable from "../components/BoxTable";
 import { Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { UserContext } from "../../UserContext";
+import axios from "axios";
 
 export default function WordlePage() {
-
     const [guess, setGuess] = useState("");
     const [guessedWords, setGuessedWords] = useState(new Array(5).fill(new Array(5).fill(" ")));
     const [currGuessIdx, setCurrGuessIdx] = useState(0);
@@ -13,6 +14,7 @@ export default function WordlePage() {
     const [targetWord, setTargetWord] = useState("");
     const [replay, setReplay] = useState(false);
     const [route, setRoute] = useState(false);
+    const { user } = useContext(UserContext);
 
     const WordleWords = [
         "apple", "chair", "house", "table", "grape", "train", "pizza", "beach", "ocean", "panda",
@@ -26,23 +28,38 @@ export default function WordlePage() {
         console.log(targetWord);
     }, [])
 
+    async function storeGame(won) {
+        await axios.post('/storegame', {
+            userId: user._id,
+            guessedWords,
+            won
+        })
+    }
+
+    useEffect(() => {
+        if (gameWon || currGuessIdx > 4) {
+            setGameOver(true);
+            storeGame(gameWon);
+        }
+    }, [gameWon, currGuessIdx]);
+
     function submitGuess(ev) {
         ev.preventDefault();
+
+        const currentGuess = guess;
 
         var newGuessedWords = [...guessedWords];
         newGuessedWords[currGuessIdx] = guess.split('');
         setGuessedWords(newGuessedWords);
+        setGuess('');
+
         setCurrGuessIdx(currGuessIdx + 1);
+        console.log(guessedWords, currGuessIdx);
 
-        if (currGuessIdx >= 4) {
-            setGameOver(true);
-        }
-
-        if (guess === targetWord) {
+        if (currentGuess === targetWord) {
             setGameWon(true);
         }
 
-        setGuess('');
     }
 
     function replayGame(ev) {
