@@ -14,12 +14,14 @@ export default function ProfilePage() {
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
     const [gameRecord, setGameRecord] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`/gamerecord/${user._id}`).then(response => {
+        axios.get(`/gamerecord/${user?._id}`).then(response => {
             const { data } = response;
             console.log(data);
             setGameRecord(data);
+            setLoading(false);
         })
     }, []);
 
@@ -34,7 +36,11 @@ export default function ProfilePage() {
         setUser(null);
     }
 
-    const wordleArr = [];
+    const wordleArr = gameRecord?.games;
+
+    console.log({
+        wordleArr
+    })
 
     if (redirect !== '') return <Navigate to={redirect} />
 
@@ -117,7 +123,7 @@ export default function ProfilePage() {
                             <h1 className="text-3xl font-semibold mb-10">Previous Games</h1>
                             <div className="relative grid grid-cols-2 gap-5">
                                 {
-                                    wordleArr.map((val, i) => (
+                                    !loading && wordleArr?.map((val, i) => (
                                         <div key={i} className="m-auto" onClick={() => handleClick(i)}>
                                             <DisplayWordle wordleWords={val} targetWord={"teach"} />
                                         </div>
