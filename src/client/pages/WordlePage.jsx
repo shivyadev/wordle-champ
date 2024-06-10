@@ -32,7 +32,8 @@ export default function WordlePage() {
         await axios.post('/storegame', {
             userId: user._id,
             guessedWords,
-            won
+            won,
+            targetWord,
         })
     }
 

@@ -68,10 +68,6 @@ app.post('/register', async (req,res) => {
             mail: email,
             password: encryptedPwd,
         });
-        
-        await GameRecords.create({
-            userId: createdUser._id,
-        });
 
         res.json(createdUser);
 
@@ -120,24 +116,33 @@ app.get('/profile', verifyAccessToken, (req,res) => {
 app.get('/gamerecord/:id', async (req, res) => {
     const {id} = req.params;
     try{
-        const gameRecord = await GameRecords.findOne({userId: id});
+        const gameRecord = await GameRecords.find({userId: id});
+        console.log(gameRecord);
         res.json(gameRecord);
     }catch(err){
-        console.error('here',err);
+        console.error(err);
     }
 })
 
 app.post('/storegame', async (req, res) => {
-    const {userId, guessedWords, won} = req.body;
+    const {userId, guessedWords, won, targetWord} = req.body;
     
     try{
-        const gameRecord = await GameRecords.findOne({userId});
-        gameRecord.games.length = 0;
-        gameRecord.gamesCompleted += 1;
+        
+        const userRecord = await User.findById(userId);
+        userRecord.gamesCompleted += 1;
         if(won) {
-            gameRecord.gamesWon += 1;
+            userRecord.gamesWon += 1;
         }
-        await gameRecord.save();
+
+        await userRecord.save();
+
+        await GameRecords.create({
+            userId,
+            gameRecord: guessedWords,
+            word: targetWord,
+        })
+
     }catch(err){
         console.error(err)
     }

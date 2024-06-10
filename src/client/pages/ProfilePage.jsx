@@ -13,17 +13,17 @@ export default function ProfilePage() {
     const { user, ready, setUser } = useContext(UserContext);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
-    const [gameRecord, setGameRecord] = useState(null);
+    const [gameHistory, setGameHistory] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`/gamerecord/${user?._id}`).then(response => {
             const { data } = response;
             console.log(data);
-            setGameRecord(data);
+            setGameHistory(data);
             setLoading(false);
         })
-    }, []);
+    }, [user]);
 
     function handleClick(idx) {
         setSelectedWordleIndex(idx);
@@ -35,12 +35,6 @@ export default function ProfilePage() {
         setRedirect('/');
         setUser(null);
     }
-
-    const wordleArr = gameRecord?.games;
-
-    console.log({
-        wordleArr
-    })
 
     if (redirect !== '') return <Navigate to={redirect} />
 
@@ -113,9 +107,9 @@ export default function ProfilePage() {
                     <div className="p-8 border-b-[3px] border-gray-200 shadow-lg">
                         <h1 className="text-3xl font-semibold mb-6">Player Stats</h1>
                         <ul>
-                            <li>Number of games played: {gameRecord?.gamesCompleted}</li>
-                            <li>Number of games completed: {gameRecord?.gamesWon}</li>
-                            <li>Success Rate: {(gameRecord?.gamesWon / gameRecord?.gamesCompleted).toFixed(2) * 100}%</li>
+                            <li>Number of games played: {user?.gamesCompleted}</li>
+                            <li>Number of games won: {user?.gamesWon}</li>
+                            <li>Success Rate: {user.gamesCompleted !== 0 ? ((user?.gamesWon / user?.gamesCompleted).toFixed(2) * 100) : 0}%</li>
                         </ul>
                     </div>
                     <div>
@@ -123,16 +117,16 @@ export default function ProfilePage() {
                             <h1 className="text-3xl font-semibold mb-10">Previous Games</h1>
                             <div className="relative grid grid-cols-2 gap-5">
                                 {
-                                    !loading && wordleArr?.map((val, i) => (
-                                        <div key={i} className="m-auto" onClick={() => handleClick(i)}>
-                                            <DisplayWordle wordleWords={val} targetWord={"teach"} />
+                                    !loading && gameHistory?.map((obj, idx) => (
+                                        <div key={idx} className="m-auto" onClick={() => handleClick(idx)}>
+                                            <DisplayWordle wordleWords={obj.gameRecord} targetWord={obj.word} />
                                         </div>
                                     ))
                                 }
 
                                 {displayFullWindow && selectedWordleIndex !== null && (
                                     <div className="full-window">
-                                        <FullWordleDisplay val={wordleArr[selectedWordleIndex]} targetWord={"teach"} setDisplayFullWindow={setDisplayFullWindow} />
+                                        <FullWordleDisplay val={gameHistory[selectedWordleIndex].gameRecord} targetWord={gameHistory[selectedWordleIndex].word} setDisplayFullWindow={setDisplayFullWindow} />
                                     </div>
                                 )}
                             </div>

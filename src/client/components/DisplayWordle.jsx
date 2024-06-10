@@ -3,6 +3,8 @@ import BoxTable from "./BoxTable";
 
 export default function DisplayWordle({ wordleWords, targetWord }) {
 
+    console.log(wordleWords, "-----");
+
     return (
         <div className="bg-grey-300 p-1 opacity-75 hover:opacity-100 transition-all cursor-pointer">
             <div className="relative grid grid-rows-5 gap-1">
