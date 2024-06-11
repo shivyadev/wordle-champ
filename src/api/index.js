@@ -113,12 +113,25 @@ app.get('/profile', verifyAccessToken, (req,res) => {
     }
 })
 
+app.get('/profile/:id', async (req, res) => {
+    const {id} = req.params;
+    try{
+        const profileInfo = await User.findById(id);
+        res.json(profileInfo);
+    }catch(err){
+        console.error(err);
+    }
+})
+
 app.get('/gamerecord/:id', async (req, res) => {
     const {id} = req.params;
     try{
         const gameRecord = await GameRecords.find({userId: id});
-        console.log(gameRecord);
-        res.json(gameRecord);
+        gameRecord.reverse();
+        if(gameRecord.length > 4) gameRecord.length = 4;
+        
+        const userRecord = await User.findById(id);
+        res.json([gameRecord, userRecord]);
     }catch(err){
         console.error(err);
     }
@@ -146,6 +159,17 @@ app.post('/storegame', async (req, res) => {
     }catch(err){
         console.error(err)
     }
+})
+
+app.get('/search', async (req,res) => {
+    const searchValue = req.query.name;
+    try{
+        const userList = await User.find({name: {$regex: searchValue, $options: 'i'}});
+        res.json(userList);
+    }catch(err){
+        console.error(err);
+    }
+    
 })
 
 app.post('/logout', (req,res) => {

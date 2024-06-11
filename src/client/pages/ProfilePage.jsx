@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useState, useContext, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import img from '../../images/image1.jpg';
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
 import Navbar from "../components/Navbar";
+import SearchBar from "../components/SearchBar";
 
 export default function ProfilePage() {
 
@@ -19,11 +20,11 @@ export default function ProfilePage() {
     useEffect(() => {
         axios.get(`/gamerecord/${user?._id}`).then(response => {
             const { data } = response;
-            console.log(data);
-            setGameHistory(data);
+            setGameHistory(data[0]);
+            setUser(data[1]);
             setLoading(false);
         })
-    }, [user]);
+    }, []);
 
     function handleClick(idx) {
         setSelectedWordleIndex(idx);
@@ -31,7 +32,7 @@ export default function ProfilePage() {
     }
 
     function logout() {
-        axios.post('/logout')
+        axios.post('/logout');
         setRedirect('/');
         setUser(null);
     }
@@ -50,9 +51,7 @@ export default function ProfilePage() {
     return (
         <div>
             <Navbar onPage={'profile'} />
-            <form className="w-[30%] m-auto mt-2">
-                <input type="text" id="searchInput" className="text-center bg-gray-50 rounded-2xl" placeholder="Search Profile" />
-            </form>
+            <SearchBar />
             <div className="grid grid-cols-7 mx-10 my-[4%]">
                 <div className="flex flex-col col-span-3 items-center">
                     <div className="text-center">

@@ -7,6 +7,7 @@ import ProfilePage from "./client/pages/ProfilePage";
 import { UserContextProvider } from "./UserContext";
 import './App.css';
 import WordlePage from "./client/pages/WordlePage";
+import SearchPage from "./client/pages/SearchPage";
 
 axios.defaults.baseURL = 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -19,6 +20,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/wordle" element={<WordlePage />} />
       </Routes>
     </UserContextProvider>
