@@ -6,6 +6,7 @@ const userSchema = Schema({
     password: {type: String, required: true},
     gamesCompleted: {type: Number, default: 0},
     gamesWon: {type: Number, default: 0},
+    friendsList: {type: [Schema.Types.ObjectId]},
 })
 
 const userModel = model('User', userSchema);

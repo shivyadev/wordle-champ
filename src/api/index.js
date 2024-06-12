@@ -117,7 +117,10 @@ app.get('/profile/:id', async (req, res) => {
     const {id} = req.params;
     try{
         const profileInfo = await User.findById(id);
-        res.json(profileInfo);
+        const gameRecord = await GameRecords.find({userId: id});
+        gameRecord.reverse();
+        if(gameRecord.length > 4) gameRecord.length = 4;        
+        res.json([profileInfo, gameRecord]);
     }catch(err){
         console.error(err);
     }
@@ -161,6 +164,29 @@ app.post('/storegame', async (req, res) => {
     }
 })
 
+app.post('/addfriend', async (req, res) => {
+    const {userId, friendId} = req.body;
+    try{
+        const userRecord = await User.findById(userId);
+        userRecord.friendsList.push(friendId);
+        userRecord.save();
+
+        res.json(userRecord);
+    }catch(err){
+        console.error(err);
+    }
+})
+
+app.get('/friendslist/:id', async (req,res) => {
+    const {id} = req.params;
+    const {friendsList} = await User.findById(id);
+    const result = [];
+    for(let i in friendsList){
+        result.push(await User.findById(friendsList[i]));
+    }
+    res.json(result);
+})
+
 app.get('/search', async (req,res) => {
     const searchValue = req.query.name;
     try{
@@ -171,6 +197,8 @@ app.get('/search', async (req,res) => {
     }
     
 })
+
+
 
 app.post('/logout', (req,res) => {
     res.clearCookie('accessToken');

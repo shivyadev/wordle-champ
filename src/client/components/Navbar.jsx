@@ -1,17 +1,13 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Icons from "./Icons";
 
 export default function Navbar({ onPage }) {
 
-    const [redirect, setRedirect] = useState('');
+    const navigate = useNavigate();
 
     function handleClick(route) {
-        setRedirect(route);
-    }
-
-    if (redirect !== '') {
-        return <Navigate to={redirect} />
+        navigate(route);
     }
 
     return (

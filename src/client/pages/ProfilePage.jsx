@@ -1,21 +1,25 @@
 import axios from "axios";
 import { useState, useContext, useEffect } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import img from '../../images/image1.jpg';
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
+import { set } from "mongoose";
+import Icons from "../components/Icons";
+import FriendsList from "../components/FriendsList";
 
 export default function ProfilePage() {
 
-    const [redirect, setRedirect] = useState('');
     const { user, ready, setUser } = useContext(UserContext);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
     const [gameHistory, setGameHistory] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showFriendList, setShowFriendList] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get(`/gamerecord/${user?._id}`).then(response => {
@@ -33,18 +37,15 @@ export default function ProfilePage() {
 
     function logout() {
         axios.post('/logout');
-        setRedirect('/');
         setUser(null);
+        navigate('/');
     }
 
-    if (redirect !== '') return <Navigate to={redirect} />
 
     if (!ready && user === null) {
-
         if (user === null) {
             return < Navigate to={'/login'} />
         }
-
         return "Loading...";
     }
 
@@ -61,43 +62,24 @@ export default function ProfilePage() {
                         <div className="mt-5 text-lg font-semibold">{user?.name}</div>
                     </div>
                     <div className="mt-5 border-[1px] shadow-xl cursor-pointer">
-                        <div className="flex justify-between items-center gap-2 w-80 h-[4.5rem] border-b-2 hover:bg-slate-200 duration-700">
-                            <div className="flex gap-2 pl-4">
-                                Edit Profile
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                </svg>
-                            </div>
-                            <div className="pr-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center gap-2 w-80 h-[4.5rem] border-b-2 hover:bg-slate-200 duration-700">
+                        <div onClick={() => setShowFriendList(!showFriendList)} className="flex justify-between items-center gap-2 w-80 h-[4.5rem] border-b-2 hover:bg-slate-200 duration-700">
                             <div className="flex gap-2 pl-4">
                                 Friends List
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                </svg>
+                                <Icons iconName={"friendProfile"} />
                             </div>
                             <div className="pr-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
+                                {showFriendList && <Icons iconName={"sideArrow"} styles="w-6 h-6 rotate-90" />}
+                                {!showFriendList && <Icons iconName={"sideArrow"} />}
                             </div>
                         </div>
-                        <div className="flex justify-between items-center gap-2 w-80 h-[4.5rem] hover:bg-slate-200 duration-700" onClick={logout}>
+                        {showFriendList && <FriendsList profile={user} />}
+                        <div className="flex justify-between items-center gap-2 w-80 h-[4.5rem] border-t-2 hover:bg-slate-200 duration-700" onClick={logout}>
                             <div className="flex gap-2 pl-4">
                                 Logout
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 rotate-180">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
-                                </svg>
+                                <Icons iconName={"exit"} styles="w-6 h-6 rotate-180" />
                             </div>
                             <div className="pr-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
+                                <Icons iconName={"sideArrow"} />
                             </div>
                         </div>
                     </div>
