@@ -10,6 +10,7 @@ import SearchBar from "../components/SearchBar";
 import { set } from "mongoose";
 import Icons from "../components/Icons";
 import FriendsList from "../components/FriendsList";
+import AddImage from "../components/AddImage";
 
 export default function ProfilePage() {
 
@@ -19,6 +20,7 @@ export default function ProfilePage() {
     const [gameHistory, setGameHistory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showFriendList, setShowFriendList] = useState(false);
+    const [image, setImage] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,10 +57,17 @@ export default function ProfilePage() {
             <SearchBar />
             <div className="grid grid-cols-7 mx-10 my-[4%]">
                 <div className="flex flex-col col-span-3 items-center">
-                    <div className="text-center">
-                        <div className="mt-10 w-52 h-52 rounded-full overflow-hidden">
-                            <img src={img} className="object-cover w-full h-full" />
-                        </div>
+                    <div className="relative text-center">
+                        <AddImage />
+                        {user?.imageUrl?.length > 0 &&
+                            (<div className="mt-10 w-52 h-52 rounded-full overflow-hidden">
+                                <img src={user?.imageUrl} className="object-cover w-full h-full" />
+                            </div>)}
+                        {user?.imageUrl?.length <= 0 && (
+                            <div className="bg-gray-200 rounded-full">
+                                <Icons iconName={"profile"} styles="w-52 h-52" />
+                            </div>
+                        )}
                         <div className="mt-5 text-lg font-semibold">{user?.name}</div>
                     </div>
                     <div className="mt-5 border-[1px] shadow-xl cursor-pointer">

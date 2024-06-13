@@ -1,8 +1,6 @@
 import axios from "axios";
-import { useState, useContext, useEffect } from "react";
-import { Navigate, useParams } from "react-router-dom";
-import { UserContext } from "../../UserContext";
-import img from '../../images/image1.jpg';
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
 import Navbar from "../components/Navbar";
@@ -42,10 +40,16 @@ export default function FriendsProfilePage() {
             <SearchBar />
             <div className="grid grid-cols-7 mx-10 my-[4%]">
                 <div className="flex flex-col col-span-3 items-center">
-                    <div className="text-center">
-                        <div className="mt-10 w-52 h-52 rounded-full overflow-hidden">
-                            <img src={img} className="object-cover w-full h-full" />
-                        </div>
+                    <div className="relative text-center">
+                        {profileInfo?.imageUrl?.length > 0 &&
+                            (<div className="mt-10 w-52 h-52 rounded-full overflow-hidden">
+                                <img src={profileInfo?.imageUrl} className="object-cover w-full h-full" />
+                            </div>)}
+                        {profileInfo?.imageUrl?.length <= 0 && (
+                            <div className="bg-gray-200 rounded-full">
+                                <Icons iconName={"profile"} styles="w-52 h-52" />
+                            </div>
+                        )}
                         <div className="mt-5 text-lg font-semibold">{profileInfo?.name}</div>
                     </div>
                     <div className="mt-5 border-[1px] shadow-xl cursor-pointer">
@@ -92,7 +96,6 @@ export default function FriendsProfilePage() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

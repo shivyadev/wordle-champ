@@ -7,6 +7,7 @@ const userSchema = Schema({
     gamesCompleted: {type: Number, default: 0},
     gamesWon: {type: Number, default: 0},
     friendsList: {type: [Schema.Types.ObjectId]},
+    imageUrl: String,
 })
 
 const userModel = model('User', userSchema);

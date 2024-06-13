@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
 const app = express();
 
-dotenv.config();
+dotenv.config({ path: '../../.env'});
 
 app.use(express.json());
 app.use(cors({
@@ -19,14 +19,14 @@ app.use(cors({
 }))
 app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.VITE_MONGO_URL);
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 
 function refreshToken(req, res, next) {
     const {refreshToken} = req.cookies;
-    jwt.verify(refreshToken, process.env.Refresh_Token_Secret, (err, data) => {
-        jwt.sign({id: data.id}, process.env.Access_Token_Secret, {expiresIn:'15s'}, (err, token) => {
+    jwt.verify(refreshToken, process.env.VITE_REFRESH_TOKEN_SECRET, (err, data) => {
+        jwt.sign({id: data.id}, process.env.VITE_ACCESS_TOKEN_SECRET, {expiresIn:'15s'}, (err, token) => {
             if(err) throw err;
             res.cookie('accessToken', token);
             req.cookies.accessToken = token;
@@ -39,7 +39,7 @@ const verifyAccessToken = (req, res, next) => {
     
     const {accessToken} = req.cookies;
 
-    jwt.verify(accessToken, process.env.Access_Token_Secret, (err) => {
+    jwt.verify(accessToken, process.env.VITE_ACCESS_TOKEN_SECRET, (err) => {
         if(err) {
             if(err.name === 'TokenExpiredError'){
                 return refreshToken(req, res, next);      
@@ -84,8 +84,8 @@ app.post('/login', async (req,res) => {
         const cmpPwd = bcrypt.compareSync(password, userDoc.password);
 
         if(cmpPwd) {
-            const accessToken = jwt.sign({id: userDoc._id}, process.env.Access_Token_Secret, {expiresIn: '15s'});
-            const refreshToken = jwt.sign({id: userDoc._id}, process.env.Refresh_Token_Secret, {expiresIn: '7d'});
+            const accessToken = jwt.sign({id: userDoc._id}, process.env.VITE_ACCESS_TOKEN_SECRET, {expiresIn: '15s'});
+            const refreshToken = jwt.sign({id: userDoc._id}, process.env.VITE_REFRESH_TOKEN_SECRET, {expiresIn: '7d'});
 
             res.cookie('accessToken', accessToken);
             res.cookie('refreshToken', refreshToken);
@@ -103,7 +103,7 @@ app.get('/profile', verifyAccessToken, (req,res) => {
     const {accessToken} = req.cookies;
     
     if(accessToken) {
-        jwt.verify(accessToken, process.env.Access_Token_Secret, async (err, user) => {
+        jwt.verify(accessToken, process.env.VITE_ACCESS_TOKEN_SECRET, async (err, user) => {
             if(err) throw err;
             const userDoc = await User.findById(user.id);
             res.json(userDoc);
@@ -121,6 +121,21 @@ app.get('/profile/:id', async (req, res) => {
         gameRecord.reverse();
         if(gameRecord.length > 4) gameRecord.length = 4;        
         res.json([profileInfo, gameRecord]);
+    }catch(err){
+        console.error(err);
+    }
+})
+
+app.post('/addimage/:id', async (req, res) => {
+    const {id} = req.params;
+    const {imageUrl} = req.body;
+
+    try{
+        const userRecord = await User.findById(id);
+        userRecord.imageUrl = imageUrl;
+        await userRecord.save();
+
+        res.json(userRecord);
     }catch(err){
         console.error(err);
     }

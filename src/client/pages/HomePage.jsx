@@ -25,6 +25,7 @@ export default function HomePage() {
         return <Navigate to={"/login"} />
     }
 
+
     return (
         <div>
             <div className={scroll ? "fixed w-full bg-black" : "bg-black"}>

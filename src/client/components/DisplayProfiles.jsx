@@ -4,6 +4,7 @@ import { UserContext } from '../../UserContext';
 import { useNavigate } from 'react-router-dom';
 import PopUp from './PopUp';
 import axios from 'axios';
+import Icons from './Icons';
 export default function DisplayProfiles({ profilesList }) {
 
     const { user, setUser } = useContext(UserContext);
@@ -47,7 +48,8 @@ export default function DisplayProfiles({ profilesList }) {
                             user?.name !== obj?.name && (
                                 <div className="flex flex-col items-center bg-gray-100 p-5 rounded-2xl hover:bg-gray-300 duration-500 cursor-pointer">
                                     <div onClick={() => handleClick(obj._id)} className="w-40 h-40 mb-4 rounded-full overflow-hidden">
-                                        <img src={img} className="object-cover w-full h-full" />
+                                        {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
+                                        {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
                                     </div>
                                     <div className="font-semibold first-letter:uppercase">
                                         {obj.name}

@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import img from "../../images/image1.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
+import Icons from "./Icons";
 
 export default function FriendsList({ profile }) {
 
@@ -28,7 +28,8 @@ export default function FriendsList({ profile }) {
                     friendsInfo?.map((obj, idx) => (
                         (user._id !== obj._id &&
                             <Link to={`/profile/${obj._id}`} key={idx} className="m-auto w-20 h-20 overflow-hidden rounded-full">
-                                <img src={img} className="w-full h-full object-cover" />
+                                {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
+                                {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
                             </Link>
                         )
                     ))
