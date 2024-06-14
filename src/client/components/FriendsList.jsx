@@ -21,16 +21,29 @@ export default function FriendsList({ profile }) {
         navigate(`/friends/${profile._id}`);
     }
 
+    async function removeFriend(obj) {
+        const { data } = await axios.post('/removefriend', {
+            userId: user._id,
+            friendId: obj._id
+        })
+        setFriendsInfo(data);
+    }
+
     return (
         <div>
             <div className="grid grid-cols-3 gap-2 mx-2 mt-2 cursor-default">
                 {
                     friendsInfo?.map((obj, idx) => (
                         (user._id !== obj._id &&
-                            <Link to={`/profile/${obj._id}`} key={idx} className="m-auto w-20 h-20 overflow-hidden rounded-full">
-                                {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
-                                {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
-                            </Link>
+                            <div className="relative">
+                                <Link to={`/profile/${obj._id}`} key={idx} className="relative m-auto w-20 h-20 rounded-full overflow-hidden block">
+                                    {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
+                                    {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
+                                </Link>
+                                <button onClick={() => removeFriend(obj)} className="absolute bottom-0 right-2 bg-gray-200 p-1 rounded-full">
+                                    <Icons iconName={"bin"} styles="w-5 h-5" />
+                                </button>
+                            </div>
                         )
                     ))
                 }

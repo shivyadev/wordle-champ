@@ -7,9 +7,10 @@ import { useContext } from "react";
 import { UserContext } from "../../UserContext";
 import ImagePopUp from "./ImagePopUp";
 
-export default function AddImage() {
+export default function AddImage({ username }) {
 
     const [file, setFile] = useState(null);
+    const [name, setName] = useState(username);
     const { user, setUser } = useContext(UserContext);
     const [showPopUp, setShowPopUp] = useState(false);
 
@@ -20,13 +21,15 @@ export default function AddImage() {
         uploadBytes(imageRef, file).then((response) => {
             getDownloadURL(response.ref).then(url => {
                 axios.post(`/addimage/${user?._id}`, {
-                    imageUrl: url
+                    name,
+                    imageUrl: (!Array.isArray(file)) ? url : "",
                 }).then(response => {
                     const { data } = response;
                     setUser(data);
                 })
             })
         })
+        setFile(null);
     }, [file])
 
 
@@ -35,7 +38,7 @@ export default function AddImage() {
             <button onClick={() => setShowPopUp(true)}>
                 <Icons iconName={'edit'} styles="w-7 h-7" />
             </button>
-            <ImagePopUp showPopUp={showPopUp} setShowPopUp={setShowPopUp} setFile={setFile} />
+            <ImagePopUp showPopUp={showPopUp} setShowPopUp={setShowPopUp} name={name} setName={setName} setFile={setFile} />
         </div>
     );
 

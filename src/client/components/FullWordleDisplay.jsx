@@ -1,4 +1,5 @@
 import BoxTable from "./BoxTable";
+import Icons from "./Icons";
 
 export default function FullWordleDisplay({ val, targetWord, setDisplayFullWindow }) {
 

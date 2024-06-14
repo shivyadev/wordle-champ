@@ -1,13 +1,11 @@
 import axios from "axios";
 import { useState, useContext, useEffect } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
-import img from '../../images/image1.jpg';
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
-import { set } from "mongoose";
 import Icons from "../components/Icons";
 import FriendsList from "../components/FriendsList";
 import AddImage from "../components/AddImage";
@@ -20,10 +18,11 @@ export default function ProfilePage() {
     const [gameHistory, setGameHistory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showFriendList, setShowFriendList] = useState(false);
-    const [image, setImage] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (user === null) return;
+
         axios.get(`/gamerecord/${user?._id}`).then(response => {
             const { data } = response;
             setGameHistory(data[0]);
@@ -58,7 +57,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-7 mx-10 my-[4%]">
                 <div className="flex flex-col col-span-3 items-center">
                     <div className="relative text-center">
-                        <AddImage />
+                        <AddImage imageUrl={user?.imageUrl} username={user?.name} />
                         {user?.imageUrl?.length > 0 &&
                             (<div className="mt-10 w-52 h-52 rounded-full overflow-hidden">
                                 <img src={user?.imageUrl} className="object-cover w-full h-full" />

@@ -8,6 +8,7 @@ import User from './models/User.js';
 import GameRecords from "./models/GameRecords.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
+import axios from "axios";
 const app = express();
 
 dotenv.config({ path: '../../.env'});
@@ -15,7 +16,7 @@ dotenv.config({ path: '../../.env'});
 app.use(express.json());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:5173']
+    origin: ['http://localhost:5173', 'https://random-word-api.herokuapp.com']
 }))
 app.use(cookieParser());
 
@@ -128,11 +129,13 @@ app.get('/profile/:id', async (req, res) => {
 
 app.post('/addimage/:id', async (req, res) => {
     const {id} = req.params;
-    const {imageUrl} = req.body;
+    const {imageUrl , name} = req.body;
 
     try{
         const userRecord = await User.findById(id);
-        userRecord.imageUrl = imageUrl;
+        userRecord.name = name;   
+        if(imageUrl !== "") 
+            userRecord.imageUrl = imageUrl;
         await userRecord.save();
 
         res.json(userRecord);
@@ -150,6 +153,15 @@ app.get('/gamerecord/:id', async (req, res) => {
         
         const userRecord = await User.findById(id);
         res.json([gameRecord, userRecord]);
+    }catch(err){
+        console.error(err);
+    }
+})
+
+app.get('/getword', async (req, res) => {
+    try{
+        const {data} = await axios.get('https://random-word-api.herokuapp.com/word?length=5');      
+        res.json(data[0]);      
     }catch(err){
         console.error(err);
     }
@@ -192,6 +204,25 @@ app.post('/addfriend', async (req, res) => {
     }
 })
 
+app.post('/removefriend', async (req,res) => {
+    const {userId, friendId} = req.body;
+    try{
+        const userRecord = await User.findById(userId);
+        const newFriendList = userRecord.friendsList.filter(id => {
+            return id.toString() !== friendId;
+        })
+        userRecord.friendsList = newFriendList;
+        userRecord.save();
+        const result = [];
+        for(let i in userRecord.friendsList){
+            result.push(await User.findById(userRecord.friendsList[i]));
+        }
+        res.json(result);
+    }catch(err){
+        console.error(err);
+    }
+})
+
 app.get('/friendslist/:id', async (req,res) => {
     const {id} = req.params;
     const {friendsList} = await User.findById(id);
@@ -212,8 +243,6 @@ app.get('/search', async (req,res) => {
     }
     
 })
-
-
 
 app.post('/logout', (req,res) => {
     res.clearCookie('accessToken');

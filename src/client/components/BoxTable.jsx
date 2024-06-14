@@ -15,14 +15,7 @@ export default function BoxTable({ word, targetWord, boxStyle = "", replay, setR
     });
 
     if (replay) {
-        setBoxStyles({
-            0: boxStyle,
-            1: boxStyle,
-            2: boxStyle,
-            3: boxStyle,
-            4: boxStyle,
-        });
-        setReplay(false);
+
     }
 
     function checkForCopy(val, index) {
@@ -84,6 +77,18 @@ export default function BoxTable({ word, targetWord, boxStyle = "", replay, setR
                 checkGuess(i, index)
             ))
         }
+
+        if (replay) {
+            setBoxStyles({
+                0: boxStyle,
+                1: boxStyle,
+                2: boxStyle,
+                3: boxStyle,
+                4: boxStyle,
+            });
+            setReplay(false);
+        }
+
     }, [word, replay, boxStyle])
 
     return (

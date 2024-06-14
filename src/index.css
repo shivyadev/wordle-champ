@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+.navbar{
+  z-index: 1000;
+}
+
+.slider-container {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.slider-container img {
+  @apply w-full h-full 
+}
+
 input[type="text"], 
 input[type="password"],
 input[type="email"] {
@@ -16,4 +29,14 @@ input[type="email"]:focus {
 
 #searchInput {
   @apply border-none shadow-none
+}
+
+#nameInput {
+  @apply mt-3 p-2 font-semibold focus:shadow-lg focus:border-gray-200
+}
+
+
+
+#popup {
+  z-index: 1000;
 }
