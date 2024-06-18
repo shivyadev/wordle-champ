@@ -9,9 +9,10 @@ import SearchBar from "../components/SearchBar";
 import Icons from "../components/Icons";
 import FriendsList from "../components/FriendsList";
 import AddImage from "../components/AddImage";
+import { AuthContext } from "../../AuthContext";
 
 export default function ProfilePage() {
-
+    const { setToken, axiosGET, axiosPOST } = useContext(AuthContext);
     const { user, ready, setUser } = useContext(UserContext);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
@@ -22,13 +23,15 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (user === null) return;
-
-        axios.get(`/gamerecord/${user?._id}`).then(response => {
+        const fetchGameRecord = async () => {
+            const response = await axiosGET(`/gamerecord/${user?._id}`);
             const { data } = response;
             setGameHistory(data[0]);
             setUser(data[1]);
             setLoading(false);
-        })
+        }
+
+        fetchGameRecord();
     }, []);
 
     function handleClick(idx) {
@@ -36,12 +39,12 @@ export default function ProfilePage() {
         setDisplayFullWindow(true);
     }
 
-    function logout() {
-        axios.post('/logout');
+    async function logout() {
+        await axios.post('/logout');
+        setToken(undefined);
         setUser(null);
         navigate('/');
     }
-
 
     if (!ready && user === null) {
         if (user === null) {
@@ -98,7 +101,7 @@ export default function ProfilePage() {
                         <ul>
                             <li>Number of games played: {user?.gamesCompleted}</li>
                             <li>Number of games won: {user?.gamesWon}</li>
-                            <li>Success Rate: {user.gamesCompleted !== 0 ? ((user?.gamesWon / user?.gamesCompleted).toFixed(2) * 100) : 0}%</li>
+                            <li>Success Rate: {user?.gamesCompleted !== 0 ? ((user?.gamesWon / user?.gamesCompleted).toFixed(2) * 100) : 0}%</li>
                         </ul>
                     </div>
                     <div>

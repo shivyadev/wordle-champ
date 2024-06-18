@@ -24,32 +24,28 @@ mongoose.connect(process.env.VITE_MONGO_URL);
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 
-function refreshToken(req, res, next) {
-    const {refreshToken} = req.cookies;
-    jwt.verify(refreshToken, process.env.VITE_REFRESH_TOKEN_SECRET, (err, data) => {
-        jwt.sign({id: data.id}, process.env.VITE_ACCESS_TOKEN_SECRET, {expiresIn:'15s'}, (err, token) => {
-            if(err) throw err;
-            res.cookie('accessToken', token);
-            req.cookies.accessToken = token;
-            next();
-        })
-    })
+function generateAccessToken(data) {
+    return jwt.sign({data}, process.env.VITE_ACCESS_TOKEN_SECRET, {expiresIn: '15s'});
 }
 
-const verifyAccessToken = (req, res, next) => {
-    
-    const {accessToken} = req.cookies;
+function generateRefreshToken(data) {
+    return jwt.sign({data}, process.env.VITE_REFRESH_TOKEN_SECRET, {expiresIn: '7d'});
+}
 
-    jwt.verify(accessToken, process.env.VITE_ACCESS_TOKEN_SECRET, (err) => {
+
+const verifyAccessToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if(!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.VITE_ACCESS_TOKEN_SECRET, (err, data) => {
         if(err) {
-            if(err.name === 'TokenExpiredError'){
-                return refreshToken(req, res, next);      
-            }else{
-                throw err;
-            }
-        }else{
-            next();
+            console.log('error here');
+            return res.sendStatus(403);
         }
+        req.userId = data.data; 
+        next();
     })
 }
 
@@ -84,37 +80,52 @@ app.post('/login', async (req,res) => {
         const userDoc = await User.findOne({mail});
         const cmpPwd = bcrypt.compareSync(password, userDoc.password);
 
-        if(cmpPwd) {
-            const accessToken = jwt.sign({id: userDoc._id}, process.env.VITE_ACCESS_TOKEN_SECRET, {expiresIn: '15s'});
-            const refreshToken = jwt.sign({id: userDoc._id}, process.env.VITE_REFRESH_TOKEN_SECRET, {expiresIn: '7d'});
+        const refreshToken = generateRefreshToken({id: userDoc._id});
+        const accessToken = generateAccessToken({id: userDoc._id});
 
-            res.cookie('accessToken', accessToken);
-            res.cookie('refreshToken', refreshToken);
-            res.json(userDoc);
+        if(cmpPwd) {
+            res.cookie('refreshToken', refreshToken, {
+                "httpOnly": true,
+                "secure": true,
+                "sameSite": 'Strict', 
+            }).json(accessToken);
         }
-        
+
     } catch (err) {
         console.error(err);
     }
 
 })
 
-app.get('/profile', verifyAccessToken, (req,res) => {
-
-    const {accessToken} = req.cookies;
+app.get('/refresh-token', (req, res) => {
+    const {refreshToken} = req.cookies;
     
-    if(accessToken) {
-        jwt.verify(accessToken, process.env.VITE_ACCESS_TOKEN_SECRET, async (err, user) => {
-            if(err) throw err;
-            const userDoc = await User.findById(user.id);
-            res.json(userDoc);
-        })
-    }else {
-        res.status(401).json('Unauthorized');
+    if(!refreshToken) return res.sendStatus(401);
+
+    jwt.verify(refreshToken, process.env.VITE_REFRESH_TOKEN_SECRET, (err, data) => {
+        if(err) return res.sendStatus(403);
+        const newAccessToken = generateAccessToken(data.data.id);
+        res.json(newAccessToken);
+    })
+})
+
+app.get('/profile', verifyAccessToken, async (req,res) => {       
+    try{
+        let id;
+        if (typeof req.userId === 'object' && req.userId !== null) {
+            id = req.userId.id; 
+        } else {
+            id = req.userId; 
+        }
+        const userDoc = await User.findById(id);
+        console.log(userDoc);
+        res.json(userDoc);
+    }catch {
+        res.sendStatus(404);
     }
 })
 
-app.get('/profile/:id', async (req, res) => {
+app.get('/profile/:id', verifyAccessToken, async (req, res) => {
     const {id} = req.params;
     try{
         const profileInfo = await User.findById(id);
@@ -127,7 +138,7 @@ app.get('/profile/:id', async (req, res) => {
     }
 })
 
-app.post('/addimage/:id', async (req, res) => {
+app.put('/addimage/:id', verifyAccessToken, async (req, res) => {
     const {id} = req.params;
     const {imageUrl , name} = req.body;
 
@@ -144,7 +155,7 @@ app.post('/addimage/:id', async (req, res) => {
     }
 })
 
-app.get('/gamerecord/:id', async (req, res) => {
+app.get('/gamerecord/:id', verifyAccessToken,  async (req, res) => {
     const {id} = req.params;
     try{
         const gameRecord = await GameRecords.find({userId: id});
@@ -154,7 +165,7 @@ app.get('/gamerecord/:id', async (req, res) => {
         const userRecord = await User.findById(id);
         res.json([gameRecord, userRecord]);
     }catch(err){
-        console.error(err);
+        res.sendStatus(404);
     }
 })
 
@@ -167,7 +178,7 @@ app.get('/getword', async (req, res) => {
     }
 })
 
-app.post('/storegame', async (req, res) => {
+app.post('/storegame', verifyAccessToken, async (req, res) => {
     const {userId, guessedWords, won, targetWord} = req.body;
     
     try{
@@ -191,7 +202,7 @@ app.post('/storegame', async (req, res) => {
     }
 })
 
-app.post('/addfriend', async (req, res) => {
+app.put('/addfriend', verifyAccessToken, async (req, res) => {
     const {userId, friendId} = req.body;
     try{
         const userRecord = await User.findById(userId);
@@ -204,7 +215,7 @@ app.post('/addfriend', async (req, res) => {
     }
 })
 
-app.post('/removefriend', async (req,res) => {
+app.put('/removefriend', verifyAccessToken, async (req,res) => {
     const {userId, friendId} = req.body;
     try{
         const userRecord = await User.findById(userId);
@@ -217,13 +228,13 @@ app.post('/removefriend', async (req,res) => {
         for(let i in userRecord.friendsList){
             result.push(await User.findById(userRecord.friendsList[i]));
         }
-        res.json(result);
+        res.json([result, userRecord]);
     }catch(err){
         console.error(err);
     }
 })
 
-app.get('/friendslist/:id', async (req,res) => {
+app.get('/friendslist/:id', verifyAccessToken, async (req,res) => {
     const {id} = req.params;
     const {friendsList} = await User.findById(id);
     const result = [];
@@ -233,7 +244,7 @@ app.get('/friendslist/:id', async (req,res) => {
     res.json(result);
 })
 
-app.get('/search', async (req,res) => {
+app.get('/search', verifyAccessToken, async (req,res) => {
     const searchValue = req.query.name;
     try{
         const userList = await User.find({name: {$regex: searchValue, $options: 'i'}});
@@ -245,7 +256,6 @@ app.get('/search', async (req,res) => {
 })
 
 app.post('/logout', (req,res) => {
-    res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.json(true);
 })

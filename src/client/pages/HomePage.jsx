@@ -4,7 +4,6 @@ import Icons from "../components/Icons";
 import { storage } from "../../firebase";
 import { getDownloadURL, ref, listAll } from "firebase/storage";
 
-
 export default function HomePage() {
     const [toLogin, setToLogin] = useState(false);
     const [scroll, setScroll] = useState(false);
@@ -30,21 +29,22 @@ export default function HomePage() {
 
     useEffect(() => {
         const imageRef = ref(storage, 'home-page-images/');
-        listAll(imageRef).then((response) => {
-            response.items.forEach((item) => {
-                getDownloadURL(item).then((url) => {
-                    console.log(url)
-                    if (url.includes('profile') || url.includes('friendlist')) {
-                        setImages(prev => [...prev, url]);
-                    }
-                    else {
-                        setWordleImages(prev => [...prev, url]);
-                    }
-                });
-            });
-        });
-        console.log(images, "Images");
-        console.log(wordleImages, "WordleImages");
+
+        const getImages = async () => {
+            const imagesListRef = await listAll(imageRef);
+            imagesListRef.items.forEach(async (item) => {
+                const url = await getDownloadURL(item);
+                if (url.includes('profile') || url.includes('friendlist')) {
+                    setImages(prev => [...prev, url]);
+                }
+                else {
+                    setWordleImages(prev => [...prev, url]);
+                }
+            })
+        }
+
+        getImages();
+
     }, [])
 
     useEffect(() => {

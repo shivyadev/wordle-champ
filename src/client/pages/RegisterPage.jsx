@@ -9,7 +9,7 @@ export default function RegisterPage() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [signedUp, setSignedUp] = useState(false);
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     let labelStyles = "absolute top-2 left-2 text-gray-500 text-sm transition-all";
 
     if (user != null) return <Navigate to='/profile' />
@@ -25,8 +25,8 @@ export default function RegisterPage() {
 
             if (data) {
                 setSignedUp(true);
-                setUser(data);
             }
+
         } catch (err) {
             console.error(err);
         }

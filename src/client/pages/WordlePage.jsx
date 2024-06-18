@@ -3,6 +3,7 @@ import BoxTable from "../components/BoxTable";
 import { Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { UserContext } from "../../UserContext";
+import { AuthContext } from "../../AuthContext";
 import axios from "axios";
 
 export default function WordlePage() {
@@ -13,25 +14,22 @@ export default function WordlePage() {
     const [gameWon, setGameWon] = useState(false);
     const [targetWord, setTargetWord] = useState("");
     const [replay, setReplay] = useState(false);
-    const [route, setRoute] = useState(false);
+    const [route] = useState(false);
     const { user } = useContext(UserContext);
-
-    const WordleWords = [
-        "apple", "chair", "house", "table", "grape", "train", "pizza", "beach", "ocean", "panda",
-        "lemon", "mouse", "candy", "eagle", "tiger", "snake", "queen", "music", "bread", "peach",
-        "socks", "horse", "spoon", "clock", "dress", "plant", "smile", "water", "chair", "phone"
-    ];
+    const { axiosPOST } = useContext(AuthContext);
 
     useEffect(() => {
         if (gameOver) return;
+
         axios.get('/getword').then(response => {
             const { data } = response;
             setTargetWord(data);
         })
+
     }, [gameOver])
 
     async function storeGame(won) {
-        await axios.post('/storegame', {
+        await axiosPOST('/storegame', {
             userId: user._id,
             guessedWords,
             won,

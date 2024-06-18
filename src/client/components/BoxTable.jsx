@@ -52,7 +52,7 @@ export default function BoxTable({ word, targetWord, boxStyle = "", replay, setR
 
         const letterCount = {
             "guess": word.filter(element => element === val).length,
-            "target": targetWord.filter(element => element === val).length
+            "target": targetWord?.filter(element => element === val).length
         }
 
         if (letterCount.guess > letterCount.target && letterCount.guess > 1) {
