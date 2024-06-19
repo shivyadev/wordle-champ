@@ -30,21 +30,20 @@ export default function HomePage() {
 
     useEffect(() => {
         const imageRef = ref(storage, 'home-page-images/');
-        listAll(imageRef).then((response) => {
-            response.items.forEach((item) => {
-                getDownloadURL(item).then((url) => {
-                    console.log(url)
-                    if (url.includes('profile') || url.includes('friendlist')) {
-                        setImages(prev => [...prev, url]);
-                    }
-                    else {
-                        setWordleImages(prev => [...prev, url]);
-                    }
-                });
-            });
-        });
-        console.log(images, "Images");
-        console.log(wordleImages, "WordleImages");
+        const getImages = async () => {
+            const imageRefList = await listAll(imageRef);
+            imageRefList.items.map(async (item) => {
+                const url = await getDownloadURL(item);
+                if (url.includes('profile') || url.includes('friendlist')) {
+                    setImages(prev => [...prev, url]);
+                }
+                else {
+                    setWordleImages(prev => [...prev, url]);
+                }
+            })
+        }
+
+        getImages();
     }, [])
 
     useEffect(() => {

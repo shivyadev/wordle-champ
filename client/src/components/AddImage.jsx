@@ -6,9 +6,11 @@ import axios from "axios";
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
 import ImagePopUp from "./ImagePopUp";
+import { AuthContext } from "../AuthContext";
 
 export default function AddImage({ username }) {
 
+    const { axiosPUT } = useContext(AuthContext);
     const [file, setFile] = useState(null);
     const [name, setName] = useState(username);
     const { user, setUser } = useContext(UserContext);
@@ -18,17 +20,17 @@ export default function AddImage({ username }) {
         if (file === null) return;
 
         const imageRef = ref(storage, `images/${user._id}`);
-        uploadBytes(imageRef, file).then((response) => {
-            getDownloadURL(response.ref).then(url => {
-                axios.post(`/addimage/${user?._id}`, {
-                    name,
-                    imageUrl: (!Array.isArray(file)) ? url : "",
-                }).then(response => {
-                    const { data } = response;
-                    setUser(data);
-                })
-            })
-        })
+        const addImage = async () => {
+            const { ref } = await uploadBytes(imageRef, file);
+            const url = await getDownloadURL(ref);
+            const { data } = await axiosPUT(`/addimage/${user?._id}`, {
+                name,
+                imageUrl: (!Array.isArray(file)) ? url : "",
+            });
+            setUser(data);
+        }
+
+        addImage();
         setFile(null);
     }, [file])
 

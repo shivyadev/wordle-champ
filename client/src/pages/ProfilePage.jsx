@@ -9,9 +9,11 @@ import SearchBar from "../components/SearchBar";
 import Icons from "../components/Icons";
 import FriendsList from "../components/FriendsList";
 import AddImage from "../components/AddImage";
+import { AuthContext } from "../AuthContext";
 
 export default function ProfilePage() {
 
+    const { setToken, axiosGET } = useContext(AuthContext);
     const { user, ready, setUser } = useContext(UserContext);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
@@ -23,12 +25,14 @@ export default function ProfilePage() {
     useEffect(() => {
         if (user === null) return;
 
-        axios.get(`/gamerecord/${user?._id}`).then(response => {
-            const { data } = response;
+        const getGameRecords = async () => {
+            const { data } = await axiosGET(`/gamerecord/${user?._id}`);
             setGameHistory(data[0]);
             setUser(data[1]);
             setLoading(false);
-        })
+        }
+
+        getGameRecords();
     }, []);
 
     function handleClick(idx) {
@@ -36,9 +40,10 @@ export default function ProfilePage() {
         setDisplayFullWindow(true);
     }
 
-    function logout() {
-        axios.post('/logout');
+    async function logout() {
+        await axios.post('/logout');
         setUser(null);
+        setToken(undefined);
         navigate('/');
     }
 

@@ -1,22 +1,22 @@
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import Navbar from "../components/Navbar";
 import DisplayProfiles from "../components/DisplayProfiles";
-import { UserContext } from "../UserContext";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../AuthContext";
 
 export default function FriendsPage() {
-
+    const { axiosGET } = useContext(AuthContext);
     const { id } = useParams();
     const [result, setResult] = useState([]);
 
     useEffect(() => {
-        axios.get(`friendslist/${id}`).then(response => {
-            const { data } = response;
+        const getFriends = async () => {
+            const { data } = await axiosGET(`friendslist/${id}`);
             console.log(data);
             setResult(data);
-        })
+        }
+        getFriends();
     }, [])
 
     return (

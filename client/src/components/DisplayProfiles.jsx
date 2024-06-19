@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import PopUp from './PopUp';
 import axios from 'axios';
 import Icons from './Icons';
+import { AuthContext } from '../AuthContext';
 export default function DisplayProfiles({ profilesList }) {
 
+    const { axiosPUT } = useContext(AuthContext);
     const { user, setUser } = useContext(UserContext);
     const [showPopUp, setShowPopUp] = useState(false);
     const [addFriend, setAddFriend] = useState(false);
@@ -13,17 +15,19 @@ export default function DisplayProfiles({ profilesList }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (addFriend) {
-            axios.post('/addfriend', {
+        const addFriendFunc = async () => {
+            const { data } = await axiosPUT('/addfriend', {
                 userId: user._id,
                 friendId
-            }).then(response => {
-                const { data } = response;
-                setUser(data);
-                setShowPopUp(false);
-                setAddFriend(false);
-                setFriendId(null);
-            })
+            });
+            setUser(data);
+            setShowPopUp(false);
+            setAddFriend(false);
+            setFriendId(null);
+        }
+
+        if (addFriend) {
+            addFriendFunc();
         } else {
             setFriendId(null);
         }

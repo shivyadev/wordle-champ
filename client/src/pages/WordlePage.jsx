@@ -4,8 +4,11 @@ import { Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { UserContext } from "../UserContext";
 import axios from "axios";
+import { AuthContext } from "../AuthContext";
 
 export default function WordlePage() {
+
+    const { axiosPUT } = useContext(AuthContext);
     const [guess, setGuess] = useState("");
     const [guessedWords, setGuessedWords] = useState(new Array(5).fill(new Array(5).fill(" ")));
     const [currGuessIdx, setCurrGuessIdx] = useState(0);
@@ -16,12 +19,6 @@ export default function WordlePage() {
     const [route, setRoute] = useState(false);
     const { user } = useContext(UserContext);
 
-    const WordleWords = [
-        "apple", "chair", "house", "table", "grape", "train", "pizza", "beach", "ocean", "panda",
-        "lemon", "mouse", "candy", "eagle", "tiger", "snake", "queen", "music", "bread", "peach",
-        "socks", "horse", "spoon", "clock", "dress", "plant", "smile", "water", "chair", "phone"
-    ];
-
     useEffect(() => {
         if (gameOver) return;
         axios.get('/getword').then(response => {
@@ -30,13 +27,13 @@ export default function WordlePage() {
         })
     }, [gameOver])
 
-    async function storeGame(won) {
-        await axios.post('/storegame', {
+    const storeGame = async (won) => {
+        const response = await axiosPUT('/storegame', {
             userId: user._id,
             guessedWords,
             won,
             targetWord,
-        })
+        });
     }
 
     useEffect(() => {
@@ -88,7 +85,7 @@ export default function WordlePage() {
             </h1>
             <div className="grid grid-row-5 gap-1">
                 {guessedWords.map((_, i) => (
-                    <BoxTable key={i} word={guessedWords[i]} targetWord={targetWord.split('')} replay={replay} setReplay={setReplay} />
+                    <BoxTable key={i} word={guessedWords[i]} targetWord={targetWord?.split('')} replay={replay} setReplay={setReplay} />
                 ))}
             </div>
             <form className="mt-5 bg-white" onSubmit={submitGuess}>

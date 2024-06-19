@@ -11,7 +11,6 @@ export default function SearchBar() {
     function handleSubmit(ev) {
         ev.preventDefault();
         navigate(`/search?query=${encodeURIComponent(searchValue)}`);
-
     }
 
     return (
