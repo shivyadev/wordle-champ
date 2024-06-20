@@ -69,8 +69,8 @@ export default function HomePage() {
                     <div className="flex justify-between items-center ml-10 p-2 pt-2 font-semibold text-xl text-white">
                         <Icons iconName={'logo'} />
                         {scroll && (
-                            <div className="mr-7 my-2 p-2 px-8 rounded-2xl text-slate-100 text-lg bg-gradient-to-r from-green-600 to-green-500 hover:from-green-800 hover:to-green-600">
-                                <button onClick={() => setToLogin(true)}>Play</button>
+                            <div onClick={() => setToLogin(true)} className="mr-7 my-2 p-2 px-8 rounded-2xl text-slate-100 text-lg bg-gradient-to-r from-green-600 to-green-500 hover:from-green-800 hover:to-green-600 cursor-pointer">
+                                <button>Play</button>
                             </div>
                         )}
                     </div>
