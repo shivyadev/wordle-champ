@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useContext, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
@@ -13,20 +13,18 @@ import { AuthContext } from "../AuthContext";
 
 export default function ProfilePage() {
 
-    const { setToken, axiosGET } = useContext(AuthContext);
+    const { setToken, axiosCall } = useContext(AuthContext);
     const { user, ready, setUser } = useContext(UserContext);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
     const [gameHistory, setGameHistory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showFriendList, setShowFriendList] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        if (user === null) return;
-
+        if (user === null || user === undefined) return;
         const getGameRecords = async () => {
-            const { data } = await axiosGET(`/gamerecord/${user?._id}`);
+            const { data } = await axiosCall('GET', `/gamerecord/${user?._id}`);
             setGameHistory(data[0]);
             setUser(data[1]);
             setLoading(false);
@@ -50,7 +48,7 @@ export default function ProfilePage() {
 
     if (!ready && user === null) {
         if (user === null) {
-            return < Navigate to={'/login'} />
+            return < Navigate to={'/'} />
         }
         return "Loading...";
     }
@@ -103,7 +101,7 @@ export default function ProfilePage() {
                         <ul>
                             <li>Number of games played: {user?.gamesCompleted}</li>
                             <li>Number of games won: {user?.gamesWon}</li>
-                            <li>Success Rate: {user.gamesCompleted !== 0 ? ((user?.gamesWon / user?.gamesCompleted).toFixed(2) * 100) : 0}%</li>
+                            <li>Success Rate: {user?.gamesCompleted !== 0 ? ((user?.gamesWon / user?.gamesCompleted).toFixed(2) * 100) : 0}%</li>
                         </ul>
                     </div>
                     <div>

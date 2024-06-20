@@ -2,17 +2,21 @@ import { useContext, useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import Navbar from "../components/Navbar";
 import DisplayProfiles from "../components/DisplayProfiles";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { UserContext } from "../UserContext";
 
 export default function FriendsPage() {
-    const { axiosGET } = useContext(AuthContext);
     const { id } = useParams();
     const [result, setResult] = useState([]);
+    const { axiosCall } = useContext(AuthContext);
+    const { user } = useContext(UserContext);
+
+    if (user === null) return <Navigate to="/" />;
 
     useEffect(() => {
         const getFriends = async () => {
-            const { data } = await axiosGET(`friendslist/${id}`);
+            const { data } = await axiosCall('GET', `friendslist/${id}`);
             console.log(data);
             setResult(data);
         }

@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 import Icons from "./Icons";
 import { storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import axios from "axios";
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
 import ImagePopUp from "./ImagePopUp";
 import { AuthContext } from "../AuthContext";
 
 export default function AddImage({ username }) {
-
-    const { axiosPUT } = useContext(AuthContext);
+    const { axiosCall } = useContext(AuthContext);
     const [file, setFile] = useState(null);
     const [name, setName] = useState(username);
     const { user, setUser } = useContext(UserContext);
@@ -23,7 +21,7 @@ export default function AddImage({ username }) {
         const addImage = async () => {
             const { ref } = await uploadBytes(imageRef, file);
             const url = await getDownloadURL(ref);
-            const { data } = await axiosPUT(`/addimage/${user?._id}`, {
+            const { data } = await axiosCall('PUT', `/addimage/${user?._id}`, {
                 name,
                 imageUrl: (!Array.isArray(file)) ? url : "",
             });

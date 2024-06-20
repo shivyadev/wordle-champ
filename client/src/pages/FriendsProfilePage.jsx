@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
 import Navbar from "../components/Navbar";
@@ -7,10 +7,12 @@ import SearchBar from "../components/SearchBar";
 import FriendsList from "../components/FriendsList";
 import Icons from "../components/Icons";
 import { AuthContext } from "../AuthContext";
+import { UserContext } from "../UserContext";
 
 export default function FriendsProfilePage() {
     const { id } = useParams();
-    const { axiosGET } = useContext(AuthContext);
+    const { user } = useContext(UserContext);
+    const { axiosCall } = useContext(AuthContext);
     const [profileInfo, setProfileInfo] = useState({});
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
@@ -18,9 +20,11 @@ export default function FriendsProfilePage() {
     const [loading, setLoading] = useState(true);
     const [showFriendList, setShowFriendList] = useState(false);
 
+    if (user === null) return <Navigate to='/' />;
+
     useEffect(() => {
         const getProfile = async () => {
-            const { data } = await axiosGET(`/profile/${id}`);
+            const { data } = await axiosCall('GET', `/profile/${id}`);
             setProfileInfo(data[0]);
             setGameHistory(data[1]);
             setLoading(false);

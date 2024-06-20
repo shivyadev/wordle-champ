@@ -1,26 +1,28 @@
 import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import Navbar from "../components/Navbar";
 import DisplayProfiles from "../components/DisplayProfiles";
 import { AuthContext } from "../AuthContext";
+import { UserContext } from "../UserContext";
 
 export default function SearchPage() {
 
-    const { axiosGET } = useContext(AuthContext);
+    const { axiosCall } = useContext(AuthContext);
+    const { user } = useContext(UserContext);
     const [result, setResult] = useState([]);
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const searchValue = searchParams.get('query');
 
+    if (user === null) return <Navigate to='/' />
+
     useEffect(() => {
         const getSearchResult = async () => {
-            const { data } = await axiosGET(`/search?name=${encodeURIComponent(searchValue)}`);
+            const { data } = await axiosCall('GET', `/search?name=${encodeURIComponent(searchValue)}`);
             setResult(data);
         }
-
         getSearchResult();
-
     }, [searchValue]);
 
     return (

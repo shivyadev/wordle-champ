@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Icons from "./Icons";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchBar() {
 

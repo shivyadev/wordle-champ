@@ -2,12 +2,11 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { useNavigate } from 'react-router-dom';
 import PopUp from './PopUp';
-import axios from 'axios';
 import Icons from './Icons';
 import { AuthContext } from '../AuthContext';
 export default function DisplayProfiles({ profilesList }) {
 
-    const { axiosPUT } = useContext(AuthContext);
+    const { axiosCall } = useContext(AuthContext);
     const { user, setUser } = useContext(UserContext);
     const [showPopUp, setShowPopUp] = useState(false);
     const [addFriend, setAddFriend] = useState(false);
@@ -16,7 +15,7 @@ export default function DisplayProfiles({ profilesList }) {
 
     useEffect(() => {
         const addFriendFunc = async () => {
-            const { data } = await axiosPUT('/addfriend', {
+            const { data } = await axiosCall('PUT', '/addfriend', {
                 userId: user._id,
                 friendId
             });

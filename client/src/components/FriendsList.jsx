@@ -1,20 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import Icons from "./Icons";
 import { AuthContext } from "../AuthContext";
 
 export default function FriendsList({ profile }) {
-    const { axiosGET, axiosPUT } = useContext(AuthContext);
     const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
     const [friendsInfo, setFriendsInfo] = useState([]);
+    const { axiosCall } = useContext(AuthContext);
 
     useEffect(() => {
         const getFriendsList = async () => {
-            const { data } = await axiosGET(`friendslist/${profile?._id}`);
-            console.log(data);
+            const { data } = await axiosCall('GET', `friendslist/${profile?._id}`);
             setFriendsInfo(data);
         }
         getFriendsList();
@@ -25,7 +23,7 @@ export default function FriendsList({ profile }) {
     }
 
     const removeFriend = async (obj) => {
-        const { data } = await axiosPUT('/removefriend', {
+        const { data } = await axiosCall('PUT', '/removefriend', {
             userId: user._id,
             friendId: obj._id
         })

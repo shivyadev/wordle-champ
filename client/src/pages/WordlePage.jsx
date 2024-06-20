@@ -16,8 +16,9 @@ export default function WordlePage() {
     const [gameWon, setGameWon] = useState(false);
     const [targetWord, setTargetWord] = useState("");
     const [replay, setReplay] = useState(false);
-    const [route, setRoute] = useState(false);
     const { user } = useContext(UserContext);
+
+    if (user === null) return <Navigate to='/' />
 
     useEffect(() => {
         if (gameOver) return;
@@ -69,11 +70,6 @@ export default function WordlePage() {
         setCurrGuessIdx(0);
         setReplay(true);
     }
-
-    if (route) {
-        return <Navigate to="/profile" />
-    }
-
 
     return (
         <div className="flex flex-col justify-center items-center w-screen h-screen bg-white">

@@ -4,10 +4,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
-const User = require('./models/User'); // Assuming User.js exports the User model
-const GameRecords = require('./models/GameRecords'); // Assuming GameRecords.js exports the GameRecords model
+const User = require('./models/User'); 
+const GameRecords = require('./models/GameRecords');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const {v4} = require('uuid');
 const axios = require('axios');
 
 const app = express();
@@ -27,18 +28,16 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 
 const generateAccessToken = (data) => {
-    return jwt.sign({data}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
+    return jwt.sign({data, randId: v4()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'});
 }
 
 const generateRefreshToken = (data) => {
-    return jwt.sign({data}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'});
+    return jwt.sign({data, randId: v4()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'});
 }
 
 const verifyAccessToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
-    console.log("verfication called");
 
     if (!token) {
         return res.status(401).json({ message: 'Access token is missing' });
@@ -122,7 +121,6 @@ app.post('/login', async (req,res) => {
 app.get('/profile', verifyAccessToken, async (req,res) => {
 
     try {
-        
 
         let id;
         if (typeof req.userId === 'object' && req.userId !== null) {
@@ -246,6 +244,7 @@ app.put('/removefriend', verifyAccessToken, async (req,res) => {
         for(let i in userRecord.friendsList){
             result.push(await User.findById(userRecord.friendsList[i]));
         }
+        if(result.length > 6) result.length = 6;
         res.json([result, userRecord]);
     }catch(err){
         console.error(err);
@@ -259,6 +258,9 @@ app.get('/friendslist/:id', verifyAccessToken, async (req,res) => {
     for(let i in friendsList){
         result.push(await User.findById(friendsList[i]));
     }
+    if(result.length > 6){
+        result.length = 6;
+    }
     res.json(result);
 })
 
@@ -266,6 +268,7 @@ app.get('/search', verifyAccessToken, async (req,res) => {
     const searchValue = req.query.name;
     try{
         const userList = await User.find({name: {$regex: searchValue, $options: 'i'}});
+        console.log(userList);
         res.json(userList);
     }catch(err){
         console.error(err);
