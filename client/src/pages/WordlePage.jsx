@@ -8,9 +8,9 @@ import { AuthContext } from "../AuthContext";
 
 export default function WordlePage() {
 
-    const { axiosPUT } = useContext(AuthContext);
+    const { axiosCall } = useContext(AuthContext);
     const [guess, setGuess] = useState("");
-    const [guessedWords, setGuessedWords] = useState(new Array(5).fill(new Array(5).fill(" ")));
+    const [guessedWords, setGuessedWords] = useState(new Array(6).fill(new Array(6).fill(" ")));
     const [currGuessIdx, setCurrGuessIdx] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const [gameWon, setGameWon] = useState(false);
@@ -29,7 +29,7 @@ export default function WordlePage() {
     }, [gameOver])
 
     const storeGame = async (won) => {
-        const response = await axiosPUT('/storegame', {
+        const response = await axiosCall('PUT','/storegame', {
             userId: user._id,
             guessedWords,
             won,
@@ -38,7 +38,7 @@ export default function WordlePage() {
     }
 
     useEffect(() => {
-        if (gameWon || currGuessIdx > 4) {
+        if (gameWon || currGuessIdx > 5) {
             setGameOver(true);
             storeGame(gameWon);
         }
@@ -55,7 +55,6 @@ export default function WordlePage() {
         setGuess('');
 
         setCurrGuessIdx(currGuessIdx + 1);
-        console.log(guessedWords, currGuessIdx);
 
         if (currentGuess === targetWord) {
             setGameWon(true);
@@ -64,7 +63,7 @@ export default function WordlePage() {
     }
 
     function replayGame() {
-        setGuessedWords(new Array(5).fill(new Array(5).fill(" ")));
+        setGuessedWords(new Array(6).fill(new Array(6).fill(" ")));
         setGameOver(false);
         setGameWon(false);
         setCurrGuessIdx(0);
@@ -76,7 +75,11 @@ export default function WordlePage() {
             <Navbar onPage={'wordle'} />
             <h1 className="text-6xl text-gray-700 mb-6">
                 {gameWon && "You Won!!!"}
-                {!gameWon && gameOver && "You Lost"}
+                {!gameWon && gameOver && 
+                    <div className="text-center">
+                        You Lose    
+                        <p className="mt-4 text-xl text-gray-400">The correct word is : <span className="uppercase">{targetWord}</span></p>
+                    </div>}
                 {!gameOver && !gameWon && "Wordle"}
             </h1>
             <div className="grid grid-row-5 gap-1">
@@ -85,7 +88,7 @@ export default function WordlePage() {
                 ))}
             </div>
             <form className="mt-5 bg-white" onSubmit={submitGuess}>
-                {(currGuessIdx <= 4 && !gameWon) && <input maxLength={5} minLength={5} className="p-3 bg-black border-b-2 border-white focus:outline-none text-center uppercase text-xl text-gray-400" placeholder="Type your guess here" onChange={(ev) => setGuess(ev.target.value)} value={guess} />}
+                {(currGuessIdx <= 5 && !gameWon) && <input maxLength={5} minLength={5} className="p-3 bg-black border-b-2 border-white focus:outline-none text-center uppercase text-xl text-gray-400" placeholder="Type your guess here" onChange={(ev) => setGuess(ev.target.value)} value={guess} />}
             </form>
             {(gameOver || gameWon) &&
                 <button className="absolute flex gap-2 bottom-16 right-16 p-2 bg-gray-300 rounded-xl hover:bg-gray-400 transition-all" onClick={replayGame}>

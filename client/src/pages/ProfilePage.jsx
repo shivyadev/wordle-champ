@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useContext, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import DisplayWordle from "../components/DisplayWordle";
 import FullWordleDisplay from "../components/FullWordleDisplay";
@@ -20,6 +20,7 @@ export default function ProfilePage() {
     const [gameHistory, setGameHistory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showFriendList, setShowFriendList] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user === null || user === undefined) return;
@@ -45,10 +46,9 @@ export default function ProfilePage() {
         navigate('/');
     }
 
-
     if (!ready && user === null) {
         if (user === null) {
-            return < Navigate to={'/'} />
+            return < Navigate to={'/login'} />
         }
         return "Loading...";
     }

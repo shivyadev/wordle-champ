@@ -17,7 +17,6 @@ export default function FriendsPage() {
     useEffect(() => {
         const getFriends = async () => {
             const { data } = await axiosCall('GET', `friendslist/${id}`);
-            console.log(data);
             setResult(data);
         }
         getFriends();

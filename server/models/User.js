@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
     gamesCompleted: {type: Number, default: 0},
     gamesWon: {type: Number, default: 0},
     friendsList: {type: [mongoose.Schema.Types.ObjectId]},
-    imageUrl: String,
+    imageUrl: {type: String, default:""},
 })
 
 const userModel = mongoose.model('User', userSchema);

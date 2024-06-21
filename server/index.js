@@ -84,9 +84,7 @@ app.post('/register', async (req,res) => {
             mail: email,
             password: encryptedPwd,
         });
-
         res.json(createdUser);
-
     }catch (err){
         console.error(err);
     }
@@ -268,12 +266,16 @@ app.get('/search', verifyAccessToken, async (req,res) => {
     const searchValue = req.query.name;
     try{
         const userList = await User.find({name: {$regex: searchValue, $options: 'i'}});
-        console.log(userList);
         res.json(userList);
     }catch(err){
         console.error(err);
     }
     
+})
+
+app.get('/delete', async (req,res) => {
+    await GameRecords.deleteMany();
+    res.json('deleted');
 })
 
 app.post('/logout', (req,res) => {
