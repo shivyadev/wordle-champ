@@ -20,7 +20,11 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:5173', 'https://random-word-api.herokuapp.com']
+    origin: [
+        'http://localhost:5173', 
+        'https://random-word-api.herokuapp.com',
+        'https://wordle-champ-five.vercel.app',
+    ]
 }))
 app.use(cookieParser());
 

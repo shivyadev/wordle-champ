@@ -13,6 +13,7 @@ import FriendsPage from "./pages/FriendsPage";
 import AuthContextProvider from "./AuthContext";
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+console.log(import.meta.env.VITE_SERVER_URL)
 axios.defaults.withCredentials = true;
 
 function App() {
