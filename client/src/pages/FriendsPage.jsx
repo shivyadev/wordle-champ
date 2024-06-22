@@ -7,7 +7,7 @@ import { AuthContext } from "../AuthContext";
 import { UserContext } from "../UserContext";
 
 export default function FriendsPage() {
-    const { id } = useParams();
+    const { name } = useParams();
     const [result, setResult] = useState([]);
     const { axiosCall } = useContext(AuthContext);
     const { user } = useContext(UserContext);
@@ -16,7 +16,7 @@ export default function FriendsPage() {
 
     useEffect(() => {
         const getFriends = async () => {
-            const { data } = await axiosCall('GET', `friendslist/${id}`);
+            const { data } = await axiosCall('GET', `friendslist/${name}`);
             setResult(data);
         }
         getFriends();

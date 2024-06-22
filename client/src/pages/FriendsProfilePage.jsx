@@ -10,7 +10,7 @@ import { AuthContext } from "../AuthContext";
 import { UserContext } from "../UserContext";
 
 export default function FriendsProfilePage() {
-    const { id } = useParams();
+    const { name } = useParams();
     const { user } = useContext(UserContext);
     const { axiosCall } = useContext(AuthContext);
     const [profileInfo, setProfileInfo] = useState({});
@@ -24,7 +24,7 @@ export default function FriendsProfilePage() {
 
     useEffect(() => {
         const getProfile = async () => {
-            const { data } = await axiosCall('GET', `/profile/${id}`);
+            const { data } = await axiosCall('GET', `/profile/${name}`);
             setProfileInfo(data[0]);
             setGameHistory(data[1]);
             setLoading(false);
@@ -32,7 +32,7 @@ export default function FriendsProfilePage() {
         }
 
         getProfile();
-    }, [id]);
+    }, [name]);
 
     function handleClick(idx) {
         setSelectedWordleIndex(idx);

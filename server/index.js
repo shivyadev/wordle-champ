@@ -15,6 +15,8 @@ const app = express();
 
 dotenv.config();
 
+const port = process.env.PORT || 5000;
+
 app.use(express.json());
 app.use(cors({
     credentials: true,
@@ -25,7 +27,6 @@ app.use(cookieParser());
 mongoose.connect(process.env.MONGO_URL);
 
 const bcryptSalt = bcrypt.genSaltSync(10);
-
 
 const generateAccessToken = (data) => {
     return jwt.sign({data, randId: v4()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'});
@@ -139,11 +140,11 @@ app.get('/profile', verifyAccessToken, async (req,res) => {
     }
 })
 
-app.get('/profile/:id', verifyAccessToken, async (req, res) => {
-    const {id} = req.params;
+app.get('/profile/:name', verifyAccessToken, async (req, res) => {
+    const {name} = req.params;
     try{
-        const profileInfo = await User.findById(id);
-        const gameRecord = await GameRecords.find({userId: id});
+        const profileInfo = await User.findOne({name: name});
+        const gameRecord = await GameRecords.find({userId: profileInfo._id});
         gameRecord.reverse();
         if(gameRecord.length > 4) gameRecord.length = 4;        
         res.json([profileInfo, gameRecord]);
@@ -249,9 +250,9 @@ app.put('/removefriend', verifyAccessToken, async (req,res) => {
     }
 })
 
-app.get('/friendslist/:id', verifyAccessToken, async (req,res) => {
-    const {id} = req.params;
-    const {friendsList} = await User.findById(id);
+app.get('/friendslist/:name', verifyAccessToken, async (req,res) => {
+    const {name} = req.params;
+    const {friendsList} = await User.findOne({name:name});
     const result = [];
     for(let i in friendsList){
         result.push(await User.findById(friendsList[i]));
@@ -283,4 +284,4 @@ app.post('/logout', (req,res) => {
     res.json(true);
 })
 
-app.listen(5000);
+app.listen(port);

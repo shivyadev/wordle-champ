@@ -12,7 +12,7 @@ import FriendsProfilePage from "./pages/FriendsProfilePage";
 import FriendsPage from "./pages/FriendsPage";
 import AuthContextProvider from "./AuthContext";
 
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 axios.defaults.withCredentials = true;
 
 function App() {
@@ -24,8 +24,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/:id" element={<FriendsProfilePage />} />
-          <Route path="/friends/:id" element={<FriendsPage />} />
+          <Route path="/profile/:name" element={<FriendsProfilePage />} />
+          <Route path="/friends/:name" element={<FriendsPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/wordle" element={<WordlePage />} />
         </Routes>

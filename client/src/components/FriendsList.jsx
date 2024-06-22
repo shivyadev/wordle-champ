@@ -12,14 +12,14 @@ export default function FriendsList({ profile }) {
 
     useEffect(() => {
         const getFriendsList = async () => {
-            const { data } = await axiosCall('GET', `friendslist/${profile?._id}`);
+            const { data } = await axiosCall('GET', `friendslist/${profile?.name}`);
             setFriendsInfo(data);
         }
         getFriendsList();
     }, [profile])
 
     function handleClick() {
-        navigate(`/friends/${profile._id}`);
+        navigate(`/friends/${profile.name}`);
     }
 
     const removeFriend = async (obj) => {
@@ -37,8 +37,8 @@ export default function FriendsList({ profile }) {
                 {
                     friendsInfo?.map((obj, idx) => (
                         (user._id !== obj._id &&
-                            <div className="relative">
-                                <Link to={`/profile/${obj._id}`} key={idx} className="relative m-auto w-20 h-20 rounded-full overflow-hidden block">
+                            <div key={idx} className="relative">
+                                <Link to={`/profile/${obj.name}`} key={idx} className="relative m-auto w-20 h-20 rounded-full overflow-hidden block">
                                     {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
                                     {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
                                 </Link>
