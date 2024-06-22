@@ -23,7 +23,7 @@ app.use(cors({
     origin: [
         'http://localhost:5173', 
         'https://random-word-api.herokuapp.com',
-        'https://wordle-champ-five.vercel.app',
+        'https://wordle-champ-6q2ebpq2b-shivansh-yadavs-projects-df947145.vercel.app/',
     ]
 }))
 app.use(cookieParser());
