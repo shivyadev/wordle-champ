@@ -21,9 +21,8 @@ app.use(express.json());
 app.use(cors({
     credentials: true,
     origin: [
-        'http://localhost:5173', 
-        'https://random-word-api.herokuapp.com',
-        'https://wordle-champ-6q2ebpq2b-shivansh-yadavs-projects-df947145.vercel.app/',
+        'https://wordle-champ-6q2ebpq2b-shivansh-yadavs-projects-df947145.vercel.app',
+        'https://random-word-api.herokuapp.com',        
     ]
 }))
 app.use(cookieParser());
