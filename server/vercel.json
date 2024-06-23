@@ -7,7 +7,7 @@
             "dest": "/",
             "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             "headers": {
-                "Access-Control-Allow-Origin": "https://wordle-champ-f6m7r6j9a-shivansh-yadavs-projects-df947145.vercel.app/"   
+                "Access-Control-Allow-Origin": "https://wordle-champ-3nyzr7e4t-shivansh-yadavs-projects-df947145.vercel.app/"   
             }     
         }
     ]
