@@ -20,10 +20,7 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors({
     credentials: true,
-    origin: [
-        'https://wordle-champ-6q2ebpq2b-shivansh-yadavs-projects-df947145.vercel.app',
-        'https://random-word-api.herokuapp.com',        
-    ]
+    origin: '*',
 }))
 app.use(cookieParser());
 
