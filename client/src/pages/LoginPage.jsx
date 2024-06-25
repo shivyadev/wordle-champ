@@ -25,6 +25,7 @@ export default function LoginPage() {
 
             if (data) {
                 setToken(data);
+                console.log('Token set');
                 setLoggedIn(true);
             }
 

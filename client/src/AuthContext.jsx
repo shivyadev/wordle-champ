@@ -8,10 +8,12 @@ export default function AuthContextProvider({ children }) {
     const [token, setToken] = useState(undefined);
     const tokenRef = useRef(token);
 
-    useEffect(() => {
+    const updateTokenRef = () => {
         tokenRef.current = token;
-    }, [token])
-
+        return new Promise((resolve) => {
+            resolve('Token Changed');
+        })
+    }
 
     const refreshToken = async () => {
         try {
@@ -31,6 +33,7 @@ export default function AuthContextProvider({ children }) {
     }
 
     const axiosCall = async (method, url, data = null) => {
+        await updateTokenRef();
         try {
             const config = {
                 method: method,
