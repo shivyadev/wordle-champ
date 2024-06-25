@@ -32,8 +32,8 @@ export default function DisplayProfiles({ profilesList }) {
         }
     }, [addFriend])
 
-    function handleClick(id) {
-        navigate(`/profile/${id}`);
+    function handleClick(name) {
+        navigate(`/profile/${name}`);
     }
 
     function buttonClick(id) {
@@ -43,13 +43,13 @@ export default function DisplayProfiles({ profilesList }) {
 
     return (
         <div className='my-16 mx-40'>
-            {profilesList.length > 0 &&
+            {profilesList?.length > 0 &&
                 (<div className="grid grid-cols-4 mt-10 gap-2">
                     {
                         profilesList.map((obj, idx) => (
                             user?.name !== obj?.name && (
-                                <div className="flex flex-col items-center bg-gray-100 p-5 rounded-2xl hover:bg-gray-300 duration-500 cursor-pointer">
-                                    <div onClick={() => handleClick(obj._id)} className="w-40 h-40 mb-4 rounded-full overflow-hidden">
+                                <div key={idx} className="flex flex-col items-center bg-gray-100 p-5 rounded-2xl hover:bg-gray-300 duration-500 cursor-pointer">
+                                    <div onClick={() => handleClick(obj.name)} className="w-40 h-40 mb-4 rounded-full overflow-hidden">
                                         {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
                                         {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
                                     </div>
