@@ -19,7 +19,8 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors({
-    origin: 'https://wordle-champ-five.vercel.app',
+    origin: ['https://wordle-champ-five.vercel.app'],
+    methods: ['GET', 'POST', 'PUT'],
     credentials: true,
 }))
 app.use(cookieParser());
