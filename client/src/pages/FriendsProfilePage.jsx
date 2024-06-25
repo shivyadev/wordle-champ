@@ -13,7 +13,7 @@ export default function FriendsProfilePage() {
     const { name } = useParams();
     const { user } = useContext(UserContext);
     const { axiosCall } = useContext(AuthContext);
-    const [profileInfo, setProfileInfo] = useState({});
+    const [profileInfo, setProfileInfo] = useState([]);
     const [selectedWordleIndex, setSelectedWordleIndex] = useState(null);
     const [displayFullWindow, setDisplayFullWindow] = useState(false);
     const [gameHistory, setGameHistory] = useState(null);
@@ -22,6 +22,9 @@ export default function FriendsProfilePage() {
 
     if (user === null) return <Navigate to='/' />;
 
+    console.log(profileInfo);
+
+
     useEffect(() => {
         const getProfile = async () => {
             const { data } = await axiosCall('GET', `/profile/${name}`);
@@ -29,7 +32,6 @@ export default function FriendsProfilePage() {
             setGameHistory(data[1]);
             setLoading(false);
             setShowFriendList(false);
-            console.log(data, profileInfo);
         }
         getProfile();
     }, [name]);
