@@ -144,7 +144,7 @@ app.get('/profile', verifyAccessToken, async (req,res) => {
 app.get('/profile/:name', verifyAccessToken, async (req, res) => {
     const {name} = req.params;
     try{
-        const profileInfo = await User.find({name: name});
+        const profileInfo = await User.findOne({name: name});
         const gameRecord = await GameRecords.find({userId: profileInfo._id});
         gameRecord.reverse();
         if(gameRecord.length > 4) gameRecord.length = 4;        

@@ -29,8 +29,8 @@ export default function FriendsProfilePage() {
             setGameHistory(data[1]);
             setLoading(false);
             setShowFriendList(false);
+            console.log(data, profileInfo);
         }
-
         getProfile();
     }, [name]);
 
