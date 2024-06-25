@@ -17,7 +17,6 @@ export default function AuthContextProvider({ children }) {
 
     const refreshToken = async () => {
         try {
-            console.log('refresh token called');
             const response = await axios.get('/refresh-token');
             if (response.status === 200) {
                 setToken(response.data);
@@ -52,7 +51,6 @@ export default function AuthContextProvider({ children }) {
             }
         } catch (err) {
             if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-                console.log('Token Expired or Invalid');
                 await refreshToken(); // Refresh token
                 return await axiosCall(method, url, data); // Retry original request after token refresh
             } else {
