@@ -275,6 +275,10 @@ app.get('/search', verifyAccessToken, async (req,res) => {
     
 })
 
+app.get('/testroute', (req,res) => {
+    res.json('Route can be successfully accessed');
+})
+
 app.get('/delete', async (req,res) => {
     await GameRecords.deleteMany();
     res.json('deleted');
