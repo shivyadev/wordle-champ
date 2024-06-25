@@ -23,6 +23,7 @@ export default function ProfilePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log('gamerecords called');
         if (user === null || user === undefined) return;
         const getGameRecords = async () => {
             const { data } = await axiosCall('GET', `/gamerecord/${user?._id}`);
