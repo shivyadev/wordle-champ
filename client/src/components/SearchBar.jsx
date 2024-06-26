@@ -19,7 +19,7 @@ export default function SearchBar() {
                 <div>
                     <Icons iconName={'search'} styles="w-6 h-6 ml-2 cursor-pointer" />
                 </div>
-                <input type="text" id="searchInput" className="bg-gray-100 rounded-2xl" value={searchValue} placeholder="Search Profile" onChange={(ev) => setSearchValue(ev.target.value)} />
+                <input type="text" id="searchInput" autoComplete="off" className="bg-gray-100 rounded-2xl" value={searchValue} placeholder="Search Profile" onChange={(ev) => setSearchValue(ev.target.value)} />
             </div>
         </form>
     );
