@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import Icons from "../components/Icons";
 import { storage } from "../firebase";
 import { getDownloadURL, ref, listAll } from "firebase/storage";
-import axios from 'axios';
 
 export default function HomePage() {
     const [toLogin, setToLogin] = useState(false);
@@ -12,8 +11,6 @@ export default function HomePage() {
     const [images, setImages] = useState([]);
     const [idx, setIdx] = useState(0);
     const [imageIdx, setImageIdx] = useState(0);
-    const [testData, setTestData] = useState("");
-
 
     const scrollHeader = () => {
         if (window.scrollY >= 5) {
@@ -22,14 +19,6 @@ export default function HomePage() {
             setScroll(false);
         }
     }
-
-    useEffect(() => {
-        const test = async() => {
-            const {data} = await axios.get('/testroute');
-            setTestData(data);
-        }
-        test();
-    }, [])
 
     useEffect(() => {
         window.addEventListener('scroll', scrollHeader);
@@ -91,7 +80,6 @@ export default function HomePage() {
                     <div className="mt-20 mb-10">
                         <h1 className="text-6xl font-semibold">Wordle Champs</h1>
                     </div>
-                        <p>{testData}</p>
                     <div>
                         <p className="text-xl text-gray-500 text-center">The top platform to play Wordle <br /> & <br /> compete with your friends</p>
                     </div>

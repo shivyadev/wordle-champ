@@ -53,7 +53,7 @@ export default function DisplayProfiles({ profilesList }) {
                                         {obj?.imageUrl?.length > 0 && <img src={obj.imageUrl} className="w-full h-full object-cover" />}
                                         {obj?.imageUrl?.length <= 0 && <Icons iconName={"profile"} styles="w-full h-full bg-gray-200" />}
                                     </div>
-                                    <div className="font-semibold first-letter:uppercase">
+                                    <div className="font-semibold">
                                         {obj.name}
                                     </div>
                                     {

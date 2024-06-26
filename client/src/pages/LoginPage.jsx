@@ -3,14 +3,17 @@ import { Link, Navigate } from "react-router-dom";
 import axios from 'axios';
 import { UserContext } from "../UserContext";
 import { AuthContext } from "../AuthContext";
+import ErrorMessage from "../components/ErrorMessage";
 
 export default function LoginPage() {
     const [selected, setSelected] = useState(false);
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [loggedIn, setLoggedIn] = useState(false);
+    const [dispErrMsg, setDispErrMsg] = useState(false);
     const { user } = useContext(UserContext);
     const { token, setToken } = useContext(AuthContext);
+    
     let labelStyles = "absolute top-8 left-2 text-gray-500 text-sm transition-all";
 
     if (token && user !== null) return <Navigate to='/profile' />
@@ -18,19 +21,25 @@ export default function LoginPage() {
     async function handleSubmit(ev) {
         ev.preventDefault();
         try {
-            const { data } = await axios.post('/login', {
+            const response = await axios.post('/login', {
                 mail,
                 password,
             })
 
-            if (data) {
-                setToken(data);
-                console.log('Token set');
+            if(response.status === 200){
+                setToken(response.data);
                 setLoggedIn(true);
             }
 
         } catch (err) {
-            console.error(err);
+            if (err.response && (err.response.status === 401)) {
+                setDispErrMsg(true);
+                setMail('');
+                setPassword('');
+            } else {
+                console.error('Error:', err);
+                return 'Access Forbidden'; // Or handle as needed
+            }
         }
     }
 
@@ -51,9 +60,10 @@ export default function LoginPage() {
     return (
         <div className="flex justify-center items-center w-screen h-screen bg-primary">
             <form onSubmit={handleSubmit} className="p-5 w-96 bg-white rounded-md shadow-sm shadow-black">
-                <div className="flex justify-center items-center m-5 mb-10">
+                <div className="flex justify-center items-center m-5 mb-5">
                     <h2 className="text-lg">Sign in to continue to Profile</h2>
                 </div>
+                {dispErrMsg && <ErrorMessage msg={"Invalid username or password"} />}
                 <section className="relative my-5">
                     <div className="flex justify-end mb-2">
                         <button className="text-xs text-primary">Forgot email?</button>

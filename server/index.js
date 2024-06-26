@@ -87,8 +87,13 @@ app.post('/register', async (req,res) => {
             password: encryptedPwd,
         });
         res.json(createdUser);
+
     }catch (err){
-        console.error(err);
+        if(err.keyValue.name){
+            return res.status(409).json({ message: 'Username already exists' });
+        }else if(err.keyValue.mail){
+            return res.status(409).json({ message: 'Email address already in use' });
+        }
     }
 })
 
@@ -97,8 +102,11 @@ app.post('/login', async (req,res) => {
 
     try {
         const userDoc = await User.findOne({mail});
-        const cmpPwd = bcrypt.compareSync(password, userDoc.password);
 
+        if(!userDoc) return res.status(401).json({message: 'Invalid Credentials'});
+
+        const cmpPwd = bcrypt.compareSync(password, userDoc.password);
+  
         if(cmpPwd) {
             const accessToken = generateAccessToken({id: userDoc._id});
             const refreshToken = generateRefreshToken({id: userDoc._id});
@@ -110,12 +118,14 @@ app.post('/login', async (req,res) => {
             });
 
             res.json(accessToken);
+        }else{
+            return res.status(401).json({message: 'Invalid Credentials'});
         }
         
     } catch (err) {
         console.error(err);
+        return res.status(500).json({message: 'Internal Server Error'});
     }
-
 })
 
 app.get('/profile', verifyAccessToken, async (req,res) => {
@@ -198,21 +208,17 @@ app.put('/storegame', verifyAccessToken, async (req, res) => {
     const {userId, guessedWords, won, targetWord} = req.body;
     
     try{
-        
         const userRecord = await User.findById(userId);
         userRecord.gamesCompleted += 1;
         if(won) {
             userRecord.gamesWon += 1;
         }
-
         await userRecord.save();
-
         await GameRecords.create({
             userId,
             gameRecord: guessedWords,
             word: targetWord,
         })
-
     }catch(err){
         console.error(err)
     }
@@ -224,7 +230,6 @@ app.put('/addfriend', verifyAccessToken, async (req, res) => {
         const userRecord = await User.findById(userId);
         userRecord.friendsList.push(friendId);
         userRecord.save();
-
         res.json(userRecord);
     }catch(err){
         console.error(err);

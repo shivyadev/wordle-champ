@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../UserContext";
 import { AuthContext } from "../AuthContext";
+import ErrorMessage from "../components/ErrorMessage";
 
 export default function RegisterPage() {
     const [selected, setSelected] = useState(false);
@@ -10,6 +11,7 @@ export default function RegisterPage() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [signedUp, setSignedUp] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
     const { user } = useContext(UserContext);
     const { token } = useContext(AuthContext);
     let labelStyles = "absolute top-2 left-2 text-gray-500 text-sm transition-all";
@@ -19,17 +21,23 @@ export default function RegisterPage() {
     async function handleSubmit(ev) {
         ev.preventDefault();
         try {
-            const { data } = await axios.post('/register', {
+            const response = await axios.post('/register', {
                 name,
                 mail,
                 password,
             })
 
-            if (data) {
+            if(response.status === 200){
                 setSignedUp(true);
             }
+
         } catch (err) {
-            console.error(err);
+            if(err.response && err.response.status === 409){
+                setErrMsg(err.response.data.message);
+                setName('');
+                setMail('');
+                setPassword('');
+            }
         }
     }
 
@@ -50,9 +58,10 @@ export default function RegisterPage() {
     return (
         <div className="flex justify-center items-center w-screen h-screen bg-primary">
             <form onSubmit={handleSubmit} className="p-5 w-96 bg-white rounded-md shadow-sm shadow-black">
-                <section className="flex justify-center items-center m-5 mb-10">
+                <section className="flex justify-center items-center m-5 mb-5">
                     <h2 className="text-lg">Sign up</h2>
                 </section>
+                {errMsg !== '' && <ErrorMessage msg={errMsg} />}
                 <section className="relative my-7">
                     <label className={labelStyles} htmlFor={"name"}>Username</label>
                     <input onSelect={handleSelect} type="text" id={"name"} value={name} onChange={(ev) => setName(ev.target.value)} autoComplete="off" />
