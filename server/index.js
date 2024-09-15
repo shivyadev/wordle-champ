@@ -105,7 +105,7 @@ app.post('/login', async (req,res) => {
 
         if(!userDoc) return res.status(401).json({message: 'Invalid Credentials'});
 
-        const cmpPwd = bcrypt.compareSync(password, userDoc.password);
+        const cmpPwd = await bcrypt.compareSync(password, userDoc.password);
   
         if(cmpPwd) {
             const accessToken = generateAccessToken({id: userDoc._id});
