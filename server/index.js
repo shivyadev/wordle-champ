@@ -30,7 +30,7 @@ mongoose.connect(process.env.MONGO_URL);
 const bcryptSalt = bcrypt.genSaltSync(10);
 
 const generateAccessToken = (data) => {
-    return jwt.sign({data, randId: v4()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15s'});
+    return jwt.sign({data, randId: v4()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '60m'});
 }
 
 const generateRefreshToken = (data) => {
